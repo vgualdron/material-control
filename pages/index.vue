@@ -1,5 +1,15 @@
 <template>
   <section class="section">
+    <h3 class="subtitle is-6 has-text-grey">
+        Status:
+      <a v-if="$nuxt.isOffline" href="#">
+        IS OFFLINE
+      </a>
+      <a v-else href="#">
+        IS ONLINE
+      </a>
+      <!-- <button @click="refresh">Refresh</button> -->
+    </h3>
     <div class="columns is-mobile">
       <card
         title="Free"
@@ -45,9 +55,13 @@ import Card from '~/components/Card'
 
 export default {
   name: 'HomePage',
-
   components: {
     Card
+  },
+  methods: {
+    refresh () {
+      this.$nuxt.refresh()
+    }
   }
 }
 </script>
