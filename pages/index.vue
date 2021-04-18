@@ -8,43 +8,13 @@
       <a v-else href="#">
         IS ONLINE
       </a>
-      <!-- <button @click="refresh">Refresh</button> -->
     </h3>
     <div class="columns is-mobile">
       <card
-        title="Free"
+        title="POST"
         icon="github"
       >
-        Open source on <a href="https://github.com/buefy/buefy">
-          GitHub
-        </a>
-      </card>
-
-      <card
-        title="Responsive"
-        icon="cellphone-link"
-      >
-        <b class="has-text-grey">
-          Every
-        </b> component is responsive
-      </card>
-
-      <card
-        title="Modern"
-        icon="alert-decagram"
-      >
-        Built with <a href="https://vuejs.org/">
-          Vue.js
-        </a> and <a href="http://bulma.io/">
-          Bulma
-        </a>
-      </card>
-
-      <card
-        title="Lightweight"
-        icon="arrange-bring-to-front"
-      >
-        No other internal dependency
+        <button @click="handleFormResult">Hacer POST</button>
       </card>
     </div>
   </section>
@@ -59,8 +29,20 @@ export default {
     Card
   },
   methods: {
-    refresh () {
-      this.$nuxt.refresh()
+    async handleFormResult () {
+      const post = {
+        title: 'titulo',
+        body: {
+          contenido: 'dsadsad'
+        },
+        userId: 1
+      }
+      try {
+        const result = await this.$axios.$post('https://jsonplaceholder.typicode.com/posts', post)
+        console.log(result)
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 const production = {
-  appName: 'Controls de materiales', // Nombre de la aplicación html - title
+  appName: 'Control de materiales', // Nombre de la aplicación html - title
   appBaseDir: '/material-control', // Directorio de despliegue de la aplicación
   rootUrl: '../../../', // Url del servidor del api
   baseUrl: '../../../' //Url del apí por default
