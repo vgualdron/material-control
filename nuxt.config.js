@@ -62,7 +62,14 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      lang: 'es'
+      name: envConfig.appName,
+      short_name: envConfig.appName,
+      lang: 'es',
+      display: 'standalone'
+    },
+    workbox: {
+      cachingExtensions: '@/plugins/workbox-sync.js',
+      enabled: true //should be off actually per workbox docs due to complications when used in prod
     }
   },
 

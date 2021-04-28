@@ -1,34 +1,51 @@
 <template>
   <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        material control
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
+    <section class="section">
+      <h3 class="subtitle is-6 has-text-grey">
+        Status:
+        <a v-if="$nuxt.isOffline" href="#">
+          IS OFFLINE
         </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
+        <a v-else href="#">
+          IS ONLINE
         </a>
+      </h3>
+      <div class="columns is-mobile">
+        <card
+          title="POST"
+          icon="github"
+        >
+          <button @click="handleFormResult">Hacer POST</button>
+        </card>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <script>
-export default {}
+
+export default {
+  name: 'HomePage',
+  components: {
+  },
+  methods: {
+    async handleFormResult () {
+      const post = {
+        title: 'titulo',
+        body: {
+          contenido: 'dsadsad'
+        },
+        userId: 1
+      }
+      try {
+        const result = await this.$axios.$post('https://jsonplaceholder.typicode.com/posts', post)
+        console.log(result)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+}
 </script>
 
 <style>
