@@ -45,7 +45,7 @@ export default {
         userId: 1
       }
       try {
-        const result = await this.$axios.$post(envConfig.appBaseDir + '/api/db', post)
+        const result = await this.$axios.$post('https://vgualdron.github.io/material-control/api/db', post)
         await this.getResults()
         console.log(result)
       } catch (e) {
@@ -54,7 +54,7 @@ export default {
     },
     async getResults () {
       try {
-        const result = await this.$axios.$get(envConfig.appBaseDir + '/api/db')
+        const result = await this.$axios.$get('https://vgualdron.github.io/material-control/api/db')
         console.log(result)
         this.items = [...result]
       } catch (e) {
