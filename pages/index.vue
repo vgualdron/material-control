@@ -11,22 +11,29 @@
         </a>
       </h3>
       <div class="columns is-mobile">
-        <card
-          title="POST"
-          icon="github"
-        >
-          <button @click="handleFormResult">Hacer POST</button>
-        </card>
+        <button @click="handleFormResult">Hacer POST</button>
+      </div>
+      <div>
+        {{JSON.stringify(items.length)}}
       </div>
     </section>
   </div>
 </template>
 
 <script>
-
+import environmentConfig from '../config/env.config.js'
+const envConfig = environmentConfig[process.env.NODE_ENV]
 export default {
   name: 'HomePage',
   components: {
+  },
+  data () {
+    return {
+      items: []
+    }
+  },
+  async mounted () {
+    await this.getResults()
   },
   methods: {
     async handleFormResult () {
@@ -38,8 +45,18 @@ export default {
         userId: 1
       }
       try {
-        const result = await this.$axios.$post('https://jsonplaceholder.typicode.com/posts', post)
+        const result = await this.$axios.$post(envConfig.appBaseDir + '/api/db', post)
+        await this.getResults()
         console.log(result)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async getResults () {
+      try {
+        const result = await this.$axios.$get(envConfig.appBaseDir + '/api/db')
+        console.log(result)
+        this.items = [...result]
       } catch (e) {
         console.log(e)
       }
