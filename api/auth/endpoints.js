@@ -1,3 +1,3 @@
 export default {
-  login: 'https://thatcopy.pw/catapi/rest/'
+  login: 'https://animechan.vercel.app/api/random'
 };

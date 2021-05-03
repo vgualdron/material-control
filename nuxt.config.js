@@ -68,8 +68,7 @@ export default {
       display: 'standalone'
     },
     workbox: {
-      cachingExtensions: '@/plugins/workbox-sync.js',
-      enabled: true //should be off actually per workbox docs due to complications when used in prod
+      cachingExtensions: '@/plugins/workbox-sync.js'
     }
   },
 

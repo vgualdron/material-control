@@ -13,7 +13,10 @@
       <div class="columns is-mobile">
         <button @click="handleFormResult">Hacer GET</button>
       </div>
-      <div>
+      <div class="columns is-mobile mt-3">
+        <button @click="post">Hacer POST</button>
+      </div>
+      <div class="columns is-mobile mt-3">
         {{ JSON.stringify(token) }}
       </div>
     </section>
@@ -44,6 +47,19 @@ export default {
     ]),
     async handleFormResult () {
       await this.login();
+    },
+    async post (formObj) {
+      const post = {
+        title: '1',
+        body: 'dsadassa',
+        userId: 1
+      };
+      try {
+        const result = await this.$axios.$post('https://jsonplaceholder.typicode.com/posts', post);
+        console.log(result);
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 };
