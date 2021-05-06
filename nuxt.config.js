@@ -63,6 +63,9 @@ export default {
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
+    icon: {
+
+    },
     manifest: {
       name: envConfig.appName,
       short_name: envConfig.appName,
@@ -74,6 +77,7 @@ export default {
         '@/plugins/workbox-sync.js',
         '@/plugins/workbox-cache-http.js'
       ],
+      enabled: true,
       dev: isDev
     }
   },
