@@ -1,5 +1,7 @@
 import environmentConfig from './config/env.config.js'
-let envConfig = environmentConfig[process.env.NODE_ENV];
+const env = process.env.NODE_ENV;
+const isDev = process.env.NODE_ENV !== 'production';
+const envConfig = environmentConfig[env];
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   mode: 'spa',
@@ -72,7 +74,7 @@ export default {
         '@/plugins/workbox-sync.js',
         '@/plugins/workbox-cache-http.js'
       ],
-      enabled: true
+      dev: isDev
     }
   },
 
