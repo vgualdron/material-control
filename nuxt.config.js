@@ -77,7 +77,7 @@ export default {
         '@/plugins/workbox-range-request.js'
       ],
       dev: isDev,
-      enabled: false
+      enabled: !isDev
     }
   },
 
