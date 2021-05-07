@@ -77,7 +77,6 @@ export default {
         '@/plugins/workbox-sync.js',
         '@/plugins/workbox-range-request.js'
       ],
-      // enabled: true,
       dev: isDev
     }
   },
