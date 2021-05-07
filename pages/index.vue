@@ -2,7 +2,7 @@
   <div class="container">
     <section class="section">
       <h3 class="subtitle is-6 has-text-grey">
-        1 Status:
+        2 Status:
         <a v-if="$nuxt.isOffline" href="#">
           IS OFFLINE
         </a>

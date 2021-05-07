@@ -4,7 +4,6 @@ const isDev = process.env.NODE_ENV !== 'production';
 const envConfig = environmentConfig[env];
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
-  mode: 'spa',
   env: envConfig,
   generate: {
     dir: 'docs'
