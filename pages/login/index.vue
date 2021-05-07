@@ -1,29 +1,4 @@
 <template>
-<<<<<<< HEAD
-  <section class="section">
-    <h3 class="subtitle is-6 has-text-grey">
-        Status:
-      <a v-if="$nuxt.isOffline" href="#">
-        IS OFFLINE
-      </a>
-      <a v-else href="#">
-        IS ONLINE
-      </a>
-    </h3>
-    <div class="columns is-mobile">
-      <card
-        title="POST"
-        icon="github"
-      >
-        <button @click="handleFormResult">Hacer POST</button>
-      </card>
-    </div>
-  </section>
-</template>
-
-<script>
-import Card from '~/components/Card'
-=======
   <div class="container">
     <section class="section">
       <h3 class="subtitle is-6 has-text-grey">
@@ -50,34 +25,10 @@ import Card from '~/components/Card'
 
 <script>
 import { mapState, mapActions } from 'vuex';
->>>>>>> 61cced6b8353627a20622a28d942d0ba3d1ef172
 
 export default {
-  name: 'HomePage',
+  name: 'Login',
   components: {
-<<<<<<< HEAD
-    Card
-  },
-  methods: {
-    async handleFormResult () {
-      const post = {
-        title: 'titulo',
-        body: {
-          contenido: 'dsadsad'
-        },
-        userId: 1
-      }
-      try {
-        const result = await this.$axios.$post('https://jsonplaceholder.typicode.com/posts', post)
-        console.log(result)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  }
-}
-</script>
-=======
   },
   data () {
     return {
@@ -117,4 +68,3 @@ export default {
 <style>
 
 </style>
->>>>>>> 61cced6b8353627a20622a28d942d0ba3d1ef172

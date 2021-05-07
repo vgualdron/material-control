@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "material-control",
+=======
+  "name": "Control-de-materiales",
+>>>>>>> 61cced6b8353627a20622a28d942d0ba3d1ef172
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -14,9 +18,17 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.1",
     "@nuxtjs/pwa": "^3.3.5",
+<<<<<<< HEAD
     "core-js": "^3.9.1",
     "nuxt": "^2.15.3",
     "nuxt-buefy": "^0.4.4"
+=======
+    "bootstrap": "^4.6.0",
+    "bootstrap-vue": "^2.21.2",
+    "core-js": "^3.9.1",
+    "nodemon": "^2.0.7",
+    "nuxt": "^2.15.3"
+>>>>>>> 61cced6b8353627a20622a28d942d0ba3d1ef172
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",
