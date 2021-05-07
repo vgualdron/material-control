@@ -75,9 +75,9 @@ export default {
     workbox: {
       cachingExtensions: [
         '@/plugins/workbox-sync.js',
-        '@/plugins/workbox-cache-http.js'
+        '@/plugins/workbox-range-request.js'
       ],
-      enabled: true,
+      // enabled: true,
       dev: isDev
     }
   },
