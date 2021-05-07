@@ -1,5 +1,5 @@
 const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('formQueue', {
-  maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
+  maxRetentionTime: 1 // Retry for max of 24 Hours (specified in minutes)
 });
 workbox.routing.registerRoute(
   /https:\/\/jsonplaceholder\.typicode\.com\/posts/,
