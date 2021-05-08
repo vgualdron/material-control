@@ -12,7 +12,7 @@ export default {
   ssr: false,
 
   // Target: https://go.nuxtjs.dev/config-target
-  target: 'server',
+  target: 'static',
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -72,12 +72,23 @@ export default {
       display: 'standalone'
     },
     workbox: {
+      runtimeCaching: [
+        {
+          urlPattern: 'https://animechan.vercel.app/api/random',
+          handler: 'networkFirst',
+          method: 'GET',
+          strategyOptions: {
+            cacheName: 'my-api-cache',
+            cacheableResponse: {statuses: [0, 200]}
+          }
+        }
+      ],
       cachingExtensions: [
         '@/plugins/workbox-sync.js',
         '@/plugins/workbox-range-request.js'
       ],
       dev: isDev,
-      enabled: !isDev
+      enabled: true
     }
   },
 

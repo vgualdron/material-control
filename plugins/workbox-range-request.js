@@ -1,5 +1,5 @@
 workbox.routing.registerRoute(
-  new RegExp('https://animechan.vercel.app/api/(.*)'),
+  new RegExp('https://animechan.vercel.app/api/random'),
   new workbox.strategies.NetworkFirst({
     plugins: [
       new workbox.expiration.ExpirationPlugin({
