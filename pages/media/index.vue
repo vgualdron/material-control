@@ -3,7 +3,7 @@
     <div class="card">
       <header class="card-header">
         <p class="card-header-title has-text-grey">
-          Titulo
+          Media
         </p>
       </header>
       <div class="card-content">
@@ -37,5 +37,22 @@
 
 <script>
 export default {
+  name: 'Media',
+  layout: 'menu',
+  components: {
+  },
+  data () {
+    return {
+    };
+  },
+  computed: {
+  },
+  async mounted () {
+  },
+  methods: {
+  }
 };
 </script>
+
+<style>
+</style>

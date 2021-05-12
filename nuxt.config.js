@@ -23,7 +23,7 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+      { hid: 'description', name: 'description', content: 'fsdfds' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: './favicon.ico' }
@@ -62,6 +62,9 @@ export default {
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
+    meta: {
+      theme_color: envConfig.themeColor
+    },
     icon: {
 
     },
@@ -69,25 +72,30 @@ export default {
       name: envConfig.appName,
       short_name: envConfig.appName,
       lang: 'es',
-      display: 'standalone'
+      display: 'standalone',
+      theme_color: envConfig.themeColor,
+      description: envConfig.description
     },
     workbox: {
       runtimeCaching: [
         {
-          urlPattern: 'https://animechan.vercel.app/api/random',
-          handler: 'networkFirst',
-          method: 'GET',
+          urlPattern: 'https://novumcolombia.com/.*',
           strategyOptions: {
-            cacheName: 'my-api-cache',
-            cacheableResponse: {statuses: [0, 200]}
-          }
+            cacheName: 'our-cache',
+          },
+          strategyPlugins: [{
+             use: 'Expiration',
+             config: {
+               maxEntries: 10,
+               maxAgeSeconds: 300
+             }
+           }]
         }
       ],
       cachingExtensions: [
         '@/plugins/workbox-sync.js',
         '@/plugins/workbox-range-request.js'
       ],
-      dev: isDev,
       enabled: true
     }
   },

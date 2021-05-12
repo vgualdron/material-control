@@ -11,7 +11,7 @@
         </a>
       </h3>
       <div class="columns is-mobile">
-        <button @click="handleFormResult">Hacer GET</button>
+        <button @click="get">Hacer GET</button>
       </div>
       <div class="columns is-mobile mt-3">
         <button @click="post">Hacer POST</button>
@@ -27,7 +27,8 @@
 import { mapState, mapActions } from 'vuex';
 
 export default {
-  name: 'HomePage',
+  name: 'Home',
+  layout: 'menu',
   components: {
   },
   data () {
@@ -47,6 +48,15 @@ export default {
     ]),
     async handleFormResult () {
       await this.login();
+    },
+    async get () {
+      try {
+        const result = await this.$axios.$get('https://novumcolombia.com/api/posts/');
+        this.token = result;
+        console.log(result);
+      } catch (e) {
+        console.log(e);
+      }
     },
     async post (formObj) {
       const post = {

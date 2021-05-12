@@ -1,15 +1,9 @@
 workbox.routing.registerRoute(
-  new RegExp('https://animechan.vercel.app/api/random'),
-  new workbox.strategies.NetworkFirst({
+  /\.(mp4|webm)/,
+  new workbox.strategies.CacheFirst({
     plugins: [
-      new workbox.expiration.ExpirationPlugin({
-        maxAgeSeconds: 3 * 60 * 60
-      }),
-      new workbox.cacheableResponse.CacheableResponsePlugin({
-        statuses: [200]
-      }),
-      new workbox.rangeRequests.RangeRequestsPlugin()
-    ]
+      new workbox.rangeRequests.RangeRequestsPlugin(),
+    ],
   }),
   'GET'
 );
