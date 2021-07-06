@@ -5,6 +5,7 @@ const envConfig = environmentConfig[env];
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   env: envConfig,
+  devtools: true,
   generate: {
     dir: 'docs'
   },
@@ -32,6 +33,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    '@/assets/scss/main.scss'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -44,7 +46,8 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/eslint
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
+    '@nuxtjs/style-resources'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -54,12 +57,26 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    '@nuxtjs/proxy',
+    '@nuxtjs/style-resources'
   ],
-
+  styleResources: {
+    scss: [
+      './assets/scss/*.scss'
+    ]
+  },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
-
+  axios: {
+    proxy: true, // Can be also an object with default options
+    credentials: false
+  },
+  proxy: {
+    '/api': {
+      target:  envConfig.url
+    },
+    changeOrigin: true
+  },
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     meta: {
@@ -103,6 +120,7 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
   router: {
-    base: envConfig.appBaseDir
+    base: envConfig.appBaseDir,
+    middleware: ['auth']
   }
 }

@@ -1,4 +1,5 @@
 const state = {
-  token: null
+  activeToken: null,
+  authorizationToken: null
 };
 export default state;

@@ -4,15 +4,18 @@ const production = {
   rootUrl: '../../../', // Url del servidor del api
   baseUrl: '../../../',
   themeColor: '#000',
-  description: 'Aplicación web para el control de materiales de la empresa Novum Energy'
-}
+  description: 'Aplicación web para el control de materiales de la empresa Novum Energy',
+  urlApi: 'https://novumcolombia.com/api',
+  url: 'https://novumcolombia.com'
+};
 const development = {
   ...production, // traer todas las keys de la const de production,
-  rootUrl: `http://localhost:3000/`,
-  baseUrl: `http://localhost:3000${production.appBaseDir}/`
-}
-
+  rootUrl: 'http://localhost:3000/',
+  baseUrl: `http://localhost:3000${production.appBaseDir}/`,
+  urlApi: '/api',
+  url: 'https://novumcolombia.com'
+};
 export default {
   development,
   production
-}
+};

@@ -1,3 +1,4 @@
 export default {
-  login: 'https://animechan.vercel.app/api/random'
+  getTokenActive: '/token/get-active-token',
+  login: '/oauth/token'
 };
