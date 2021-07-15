@@ -1,3 +1,48 @@
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes spin {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@-o-keyframes spin {
+    0% {
+        -o-transform: rotate(0deg);
+    }
+    100% {
+        -o-transform: rotate(360deg);
+    }
+}
+
+@-ms-keyframes spin {
+    0% {
+        -ms-transform: rotate(0deg);
+    }
+    100% {
+        -ms-transform: rotate(360deg);
+    }
+}
+
 .loader {
     position: fixed;
     bottom: 0;
@@ -5,8 +50,9 @@
     height: 100%;
     opacity: 1;
     background-color: #FFF;
-    z-index: 10;
+    z-index: 1051;
     text-align: center;
+    opacity: 0.9;
 }
 
 .loader .reel {
@@ -48,4 +94,8 @@
 
 .image-loader {
     width: 50px;
+}
+
+.icon-close {
+    cursor: pointer;
 }

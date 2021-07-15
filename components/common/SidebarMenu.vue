@@ -14,15 +14,15 @@
         </b-img>
         <nav class="mb-3 mt-3">
           <b-nav vertical>
-            <b-nav-item :class="routerActive === '/' ? 'active' : ''" @click="go('/')">Home</b-nav-item>
+            <b-nav-item :class="routerActive === '/' ? 'active' : ''" @click="go('/')">{{ toCapitalCaseText($t('home')) }}</b-nav-item>
             <b-nav-item
               v-for="(permision, index) in userPermisions"
               :class="routerActive === permision.name ? 'active' : ''"
               @click="go(permision.name)"
               :key="'nav-item' + index">
-              {{ permision.name }}
+              {{ toCapitalCaseText($t(permision.name)) }}
             </b-nav-item>
-            <b-nav-item @click="close('/login')">Cerrar sesión</b-nav-item>
+            <b-nav-item @click="close('/login')">{{ toCapitalCaseText($t('logout')) }}</b-nav-item>
           </b-nav>
         </nav>
       </div>
@@ -35,8 +35,13 @@
 import { mapState, mapActions } from 'vuex';
 import { typesCommon } from '@/store/common/typesCommon';
 import { typesAuth } from '@/store/auth/types';
-import BannerMenu from '~/components/common/BannerMenu.vue';
+import BannerMenu from '@/components/common/BannerMenu.vue';
+import { toCapitalCase } from '@/helpers/common/string';
 export default {
+  data () {
+    return {
+    };
+  },
   components: {
     BannerMenu
   },
@@ -52,7 +57,8 @@ export default {
   methods: {
     ...mapActions(typesCommon.PATH, {
       setRouterActive: typesCommon.actions.SET_ROUTER_ACTIVE,
-      getUserPermisions: typesCommon.actions.GET_USER_PERMISIONS
+      getUserPermisions: typesCommon.actions.GET_USER_PERMISIONS,
+      getUserPermisionsGroup: typesCommon.actions.GET_USER_PERMISIONS_GROUP
     }),
     ...mapActions(typesAuth.PATH, {
       setAuthorizationToken: typesAuth.actions.SET_AUTHORIZATION_TOKEN
@@ -60,10 +66,14 @@ export default {
     go (router) {
       this.setRouterActive(router);
       this.getUserPermisions();
+      this.getUserPermisionsGroup();
     },
     close (router) {
       this.setRouterActive(router);
       this.setAuthorizationToken({});
+    },
+    toCapitalCaseText (text) {
+      return toCapitalCase(text);
     }
   }
 };

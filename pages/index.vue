@@ -2,7 +2,7 @@
   <div class="container">
     <section class="section">
       <h3 class="subtitle is-6 has-text-grey">
-        index:
+        {{ $t('home') }}
         <a v-if="$nuxt.isOffline" href="#">
           IS OFFLINE
         </a>

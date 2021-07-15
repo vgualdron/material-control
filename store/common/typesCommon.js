@@ -7,7 +7,9 @@ export const typesCommon = {
   mutations: {
     SET_ROUTER_ACTIVE: '@mutations/setRouterActive',
     SET_LOADER_STATUS: '@mutations/setLoaderStatus',
-    SET_USER_PERMISIONS: '@mutations/setUserPermisions'
+    SET_USER_PERMISIONS: '@mutations/setUserPermisions',
+    SET_USER_PERMISIONS_GROUP: '@mutations/setUserPermisionsGroup',
+    SET_TOAST: '@mutations/setToast'
   },
   actions: {
     SET_ROUTER_ACTIVE: '@actions/setRouterActive',
@@ -15,7 +17,10 @@ export const typesCommon = {
     SET_USER: '@actions/setUser',
     GET_USER: '@actions/getUser',
     GET_USER_PERMISIONS: '@actions/getUserPermisions',
-    SET_USER_PERMISIONS: '@actions/setUserPermisions'
+    SET_USER_PERMISIONS: '@actions/setUserPermisions',
+    GET_USER_PERMISIONS_GROUP: '@actions/getUserPermisionsGroup',
+    SET_USER_PERMISIONS_GROUP: '@actions/setUserPermisionsGroup',
+    SET_TOAST: '@actions/setToast'
   }
 };
 

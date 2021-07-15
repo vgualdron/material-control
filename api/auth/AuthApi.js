@@ -5,7 +5,7 @@ const env = process.env.NODE_ENV;
 const envConfig = environmentConfig[env];
 export default class AuthApi {
   async getActiveToken () {
-    return await axios.get(envConfig.urlApi + endpoints.getTokenActive);
+    return await axios.get(`${envConfig.urlApi}/${endpoints.getTokenActive}`);
   }
 
   async login (data) {
@@ -16,9 +16,6 @@ export default class AuthApi {
       password: data.password,
       username: data.username
     };
-    return await axios.post(
-      envConfig.urlApi + endpoints.login,
-      body
-    );
+    return await axios.post(`${envConfig.urlApi}/${endpoints.login}`, body);
   }
 }

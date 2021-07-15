@@ -59,8 +59,27 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     '@nuxtjs/proxy',
-    '@nuxtjs/style-resources'
+    '@nuxtjs/style-resources',
+    'nuxt-i18n'
   ],
+  i18n: {
+    locales: [
+      {
+        name: 'Español',
+        code: 'es',
+        iso: 'es-CO',
+        file: 'es-CO.js'
+      },
+      {
+        name: 'English',
+        code: 'en',
+        iso: 'en-US',
+        file: 'en-US.js'
+      },
+    ],
+    langDir: 'lang/',
+    defaultLocale: 'es'
+  },
   styleResources: {
     scss: [
       './assets/scss/*.scss'
