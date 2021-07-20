@@ -53,6 +53,7 @@ export default {
   },
   mounted () {
     this.getUserPermisions();
+    this.getUserPermisionsGroup();
   },
   methods: {
     ...mapActions(typesCommon.PATH, {
@@ -65,8 +66,6 @@ export default {
     }),
     go (router) {
       this.setRouterActive(router);
-      this.getUserPermisions();
-      this.getUserPermisionsGroup();
     },
     close (router) {
       this.setRouterActive(router);

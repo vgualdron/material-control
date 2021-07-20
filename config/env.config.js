@@ -1,6 +1,6 @@
 const production = {
   appName: 'Control de materiales', // Nombre de la aplicación html - title
-  appBaseDir: '/', // Directorio de despliegue de la aplicación
+  appBaseDir: '/material-control', // Directorio de despliegue de la aplicación
   rootUrl: '../../../', // Url del servidor del api
   baseUrl: '../../../',
   themeColor: '#000',
