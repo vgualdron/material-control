@@ -1,7 +1,7 @@
 <template>
   <b-card
-    title="Gestionar zonas"
-    sub-title="Opciones de listar, crear, modificar y eliminar zonas">
+    title="Gestionar patios"
+    sub-title="Opciones de listar, crear, modificar y eliminar patios">
     <!-- User Interface controls -->
     <b-row>
       <b-col lg="12" class="my-1">

@@ -18,6 +18,7 @@
                 id="feedback-user"
                 v-model="user"
                 :state="validationUser"
+                @keyup.enter="handleForm"
                 required>
               </b-form-input>
               <b-form-invalid-feedback :state="validationUser">
@@ -29,7 +30,8 @@
               id="feedback-password"
               v-model="password"
               :state="validationPassword"
-              type="password">
+              type="password"
+              @keyup.enter="handleForm">
             </b-form-input>
             <b-form-invalid-feedback :state="validationPassword">
               {{ labelTextFieldRequired }}

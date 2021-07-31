@@ -1,23 +1,23 @@
-import ZoneApi from '@/api/zone/ZoneApi';
+import YardApi from '@/api/yard/YardApi';
 import { typesCommon } from '@/store/common/typesCommon';
-import { typesZone as types } from './types';
-const zoneApi = new ZoneApi();
+import { typesYard as types } from './types';
+const yardApi = new YardApi();
 const actions = {
-  async [types.actions.GET_ZONES] ({ commit, dispatch }, data) {
+  async [types.actions.GET_YARDS] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await zoneApi.get(data).then((res) => {
+    await yardApi.get(data).then((res) => {
       console.log(res);
-      commit(types.mutations.SET_ZONES, res.data);
+      commit(types.mutations.SET_YARDS, res.data);
     }).catch((error) => {
       console.log(error);
     }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },
-  async [types.actions.SET_ZONE] ({ commit, dispatch }, data) {
+  async [types.actions.SET_YARD] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await zoneApi.getById(data.id).then((res) => {
-      commit(types.mutations.SET_ZONE, res.data);
+    await yardApi.getById(data.id).then((res) => {
+      commit(types.mutations.SET_YARD, res.data);
     }).catch((error) => {
       console.log(error);
     }).finally((e) => {
@@ -32,9 +32,9 @@ const actions = {
   },
   async [types.actions.SAVE] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await zoneApi.save(data).then((resp) => {
+    await yardApi.save(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_ZONES}`);
+      dispatch(`${types.actions.GET_YARDS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
@@ -44,9 +44,9 @@ const actions = {
   },
   async [types.actions.EDIT] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await zoneApi.edit(data).then((resp) => {
+    await yardApi.edit(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_ZONES}`);
+      dispatch(`${types.actions.GET_YARDS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
@@ -56,9 +56,9 @@ const actions = {
   },
   async [types.actions.DELETE] ({ commit, dispatch }, id) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await zoneApi.delete(id).then((resp) => {
+    await yardApi.delete(id).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_ZONES}`);
+      dispatch(`${types.actions.GET_YARDS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
