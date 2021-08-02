@@ -100,16 +100,20 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesZone as types } from '@/store/zone/types';
+import { typesYard as types } from '@/store/yard/types';
 import { typesCommon } from '@/store/common/typesCommon';
 import { BIconPencilFill, BIconTrashFill } from 'bootstrap-vue';
 import { inArray } from '@/helpers/common/array';
 
 export default {
   name: 'table-list',
+  components: {
+    BIconPencilFill,
+    BIconTrashFill
+  },
   data () {
     return {
-      view: 'zone',
+      view: 'yard',
       fields: [
         { key: 'code', label: 'Código', sortable: true, class: 'text-center' },
         { key: 'name', label: 'Nombre', sortable: true, class: 'text-center' },
@@ -125,27 +129,16 @@ export default {
       showList: false
     };
   },
-  watch: {
-    zones (val) {
-      this.totalRows = val.total;
-      this.showInsert = inArray(`${this.view}.insert`, this.userPermisionsGroup);
-      this.showList = inArray(`${this.view}.list`, this.userPermisionsGroup);
-    }
-  },
-  components: {
-    BIconPencilFill,
-    BIconTrashFill
-  },
   computed: {
     ...mapState(typesCommon.PATH, [
       'userPermisionsGroup'
     ]),
     ...mapState(types.PATH, [
-      'zones',
-      'zone'
+      'yards',
+      'yard'
     ]),
     items () {
-      return this.zones.data.map((item) => {
+      return this.yards.data.map((item) => {
         return {
           ...item,
           showDetail: inArray(`${this.view}.get`, this.userPermisionsGroup),
@@ -163,18 +156,25 @@ export default {
       });
     }
   },
+  watch: {
+    yards (val) {
+      this.totalRows = val.total;
+      this.showInsert = inArray(`${this.view}.insert`, this.userPermisionsGroup);
+      this.showList = inArray(`${this.view}.list`, this.userPermisionsGroup);
+    }
+  },
   created () {
     this.search();
   },
   methods: {
     ...mapActions(types.PATH, {
-      getZones: types.actions.GET_ZONES,
-      setZone: types.actions.SET_ZONE,
+      getYards: types.actions.GET_YARDS,
+      setYard: types.actions.SET_YARD,
       setShowModalForm: types.actions.SET_SHOW_MODAL_FORM,
       setTypeAction: types.actions.SET_TYPE_ACTION
     }),
     showModal (item, action) {
-      this.setZone({ ...item });
+      this.setYard({ ...item });
       this.setTypeAction(action);
       this.setShowModalForm(true);
     },
@@ -184,7 +184,7 @@ export default {
         page: this.currentPage,
         text: this.filter
       };
-      this.getZones(data);
+      this.getYards(data);
     }
   }
 };

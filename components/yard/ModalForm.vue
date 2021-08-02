@@ -64,14 +64,14 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesZone as types } from '@/store/zone/types';
+import { typesYard as types } from '@/store/yard/types';
 import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
   data () {
     return {
-      id: 'zone-modal',
-      title: 'Crear zona',
+      id: 'yard-modal',
+      title: 'Crear Patio',
       textBtnSubmit: 'Registrar',
       code: '',
       name: '',
@@ -82,25 +82,25 @@ export default {
   watch: {
     typeAction (val) {
       if (val === 'create') {
-        this.title = 'Crear Zona';
-        this.id = 'create-zone-modal';
+        this.title = 'Crear Patio';
+        this.id = 'create-yard-modal';
         this.textBtnSubmit = 'Registrar';
         this.disabledElements = false;
       }
       if (val === 'edit') {
-        this.title = 'Modificar Zona';
-        this.id = 'edit-zone-modal';
+        this.title = 'Modificar Patio';
+        this.id = 'edit-yard-modal';
         this.textBtnSubmit = 'Guardar cambios';
         this.disabledElements = false;
       }
       if (val === 'delete') {
-        this.title = 'Eliminar Zona';
-        this.id = 'delete-zone-modal';
+        this.title = 'Eliminar Patio';
+        this.id = 'delete-yard-modal';
         this.textBtnSubmit = 'Eliminar';
         this.disabledElements = true;
       }
     },
-    zone (val) {
+    yard (val) {
       if (this.typeAction === 'create') {
         this.code = '';
         this.name = '';
@@ -117,7 +117,7 @@ export default {
   computed: {
     ...mapState(types.PATH, [
       'showModalForm',
-      'zone',
+      'yard',
       'typeAction'
     ]),
     validationCode () {
@@ -151,13 +151,13 @@ export default {
       }
       if (this.typeAction === 'edit') {
         await this.edit({
-          id: this.zone.id,
+          id: this.yard.id,
           code: this.code,
           name: this.name
         });
       }
       if (this.typeAction === 'delete') {
-        await this.delete(this.zone.id);
+        await this.delete(this.yard.id);
       }
     }
   }

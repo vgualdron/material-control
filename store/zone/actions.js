@@ -6,7 +6,6 @@ const actions = {
   async [types.actions.GET_ZONES] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
     await zoneApi.get(data).then((res) => {
-      console.log(res);
       commit(types.mutations.SET_ZONES, res.data);
     }).catch((error) => {
       console.log(error);

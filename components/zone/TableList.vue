@@ -107,6 +107,10 @@ import { inArray } from '@/helpers/common/array';
 
 export default {
   name: 'table-list',
+  components: {
+    BIconPencilFill,
+    BIconTrashFill
+  },
   data () {
     return {
       view: 'zone',
@@ -124,17 +128,6 @@ export default {
       showInsert: false,
       showList: false
     };
-  },
-  watch: {
-    zones (val) {
-      this.totalRows = val.total;
-      this.showInsert = inArray(`${this.view}.insert`, this.userPermisionsGroup);
-      this.showList = inArray(`${this.view}.list`, this.userPermisionsGroup);
-    }
-  },
-  components: {
-    BIconPencilFill,
-    BIconTrashFill
   },
   computed: {
     ...mapState(typesCommon.PATH, [
@@ -161,6 +154,13 @@ export default {
           value: f.key
         };
       });
+    }
+  },
+  watch: {
+    zones (val) {
+      this.totalRows = val.total;
+      this.showInsert = inArray(`${this.view}.insert`, this.userPermisionsGroup);
+      this.showList = inArray(`${this.view}.list`, this.userPermisionsGroup);
     }
   },
   created () {
