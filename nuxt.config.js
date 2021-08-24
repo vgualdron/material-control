@@ -60,7 +60,8 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/proxy',
     '@nuxtjs/style-resources',
-    'nuxt-i18n'
+    'nuxt-i18n',
+    'nuxt-vue-select'
   ],
   i18n: {
     locales: [

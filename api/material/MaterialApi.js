@@ -1,13 +1,13 @@
 import axios from 'axios';
-import endpoints from '@/api/yard/endpoints';
+import endpoints from '@/api/material/endpoints';
 import environmentConfig from '@/config/env.config';
 import AuthHeader from '@/helpers/common/AuthHelper';
 const env = process.env.NODE_ENV;
 const envConfig = environmentConfig[env];
-export default class YardApi {
+export default class MaterialApi {
   async get (data) {
     return await axios.get(
-      `${envConfig.urlApi}/${endpoints.primary}/${data?.perPage ?? 10}/${data?.page ?? 1}/${encodeURIComponent(data?.text ? data.text : ' ')}/${encodeURIComponent(data?.yard ? data.yard : 0)}`,
+      `${envConfig.urlApi}/${endpoints.primary}/${data?.perPage ?? 10}/${data?.page ?? 1}/${encodeURIComponent(data?.text ? data.text : ' ')}`,
       {
         headers: AuthHeader()
       }

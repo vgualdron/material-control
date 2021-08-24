@@ -174,7 +174,9 @@ export default {
       setTypeAction: types.actions.SET_TYPE_ACTION
     }),
     showModal (item, action) {
-      this.setZone({ ...item });
+      if (action !== 'create') {
+        this.setZone({ ...item });
+      }
       this.setTypeAction(action);
       this.setShowModalForm(true);
     },

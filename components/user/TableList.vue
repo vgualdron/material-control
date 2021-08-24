@@ -1,7 +1,7 @@
 <template>
   <b-card
-    title="Gestionar patios"
-    sub-title="Opciones de listar, crear, modificar y eliminar patios">
+    title="Gestionar usuarios"
+    sub-title="Opciones de listar, crear, modificar y eliminar usuarios">
     <!-- User Interface controls -->
     <b-row>
       <b-col lg="12" class="my-1">
@@ -52,13 +52,10 @@
             <ul>
               <div>
                 <li>
-                  <b>Código:</b> {{ row.item.code }}
+                  <b>Documento:</b> {{ row.item.documentNumber }}
                 </li>
                 <li>
                   <b>Nombre:</b> {{ row.item.name }}
-                </li>
-                <li>
-                  <b>Zona:</b> {{ row.item.zoneName }}
                 </li>
               </div>
             </ul>
@@ -106,8 +103,8 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesYard as types } from '@/store/yard/types';
-import { typesZone } from '@/store/zone/types';
+import { typesUser as types } from '@/store/user/types';
+import { typesYard } from '@/store/yard/types';
 import { typesCommon } from '@/store/common/typesCommon';
 import { BIconPencilFill, BIconTrashFill } from 'bootstrap-vue';
 import { inArray } from '@/helpers/common/array';
@@ -120,11 +117,10 @@ export default {
   },
   data () {
     return {
-      view: 'yard',
+      view: 'user',
       fields: [
-        { key: 'code', label: 'Código', sortable: true, class: 'text-center' },
+        { key: 'documentNumber', label: 'Documento', sortable: true, class: 'text-center' },
         { key: 'name', label: 'Nombre', sortable: true, class: 'text-center' },
-        { key: 'zoneName', label: 'Zona', sortable: true, class: 'text-center' },
         { key: 'actions', label: 'Acciones', class: 'text-center' }
       ],
       totalRows: 1,
@@ -142,11 +138,11 @@ export default {
       'userPermisionsGroup'
     ]),
     ...mapState(types.PATH, [
-      'yards',
-      'yard'
+      'users',
+      'user'
     ]),
     items () {
-      return this.yards.data.map((item) => {
+      return this.users.data.map((item) => {
         return {
           ...item,
           showDetail: inArray(`${this.view}.get`, this.userPermisionsGroup),
@@ -165,7 +161,7 @@ export default {
     }
   },
   watch: {
-    yards (val) {
+    users (val) {
       this.totalRows = val.total;
       this.showInsert = inArray(`${this.view}.insert`, this.userPermisionsGroup);
       this.showList = inArray(`${this.view}.list`, this.userPermisionsGroup);
@@ -176,13 +172,13 @@ export default {
   },
   methods: {
     ...mapActions(types.PATH, {
-      getYards: types.actions.GET_YARDS,
-      setYard: types.actions.SET_YARD,
+      getUsers: types.actions.GET_USERS,
+      setUser: types.actions.SET_USER,
       setShowModalForm: types.actions.SET_SHOW_MODAL_FORM,
       setTypeAction: types.actions.SET_TYPE_ACTION
     }),
-    ...mapActions(typesZone.PATH, {
-      getZones: typesZone.actions.GET_ZONES
+    ...mapActions(typesYard.PATH, {
+      getYards: typesYard.actions.GET_YARDS
     }),
     async showModal (item, action) {
       this.setTypeAction(action);
@@ -191,11 +187,11 @@ export default {
         perPage: 10,
         page: 1,
         text: '',
-        zone: item?.zone
+        yard: item?.yard
       };
-      await this.getZones(data);
+      await this.getYards(data);
       if (action !== 'create') {
-        await this.setYard({ ...item });
+        await this.setUser({ ...item });
       }
     },
     search () {
@@ -204,7 +200,7 @@ export default {
         page: this.currentPage,
         text: this.filter
       };
-      this.getYards(data);
+      this.getUsers(data);
     }
   }
 };

@@ -1,27 +1,27 @@
 <template>
   <b-modal
-    :id="id"
     v-model="showModalForm"
+    :id="id"
     no-close-on-backdrop
     no-close-on-esc
-    @hide="resetInfoModal"
-  >
+    @hide="resetInfoModal">
     <template #modal-header>
       <h5>{{ title }}</h5>
-      <b-icon-x class="icon-close" font-scale="2" @click="resetInfoModal()" />
+      <b-icon-x @click="resetInfoModal()" class="icon-close" font-scale="2"></b-icon-x>
     </template>
-    <b-form @submit="handleForm">
+    <b-form
+      @submit="handleForm">
       <b-form-group>
-        <label for="feedback-code">Código</label>
+        <label for="feedback-document">Documento</label>
         <b-form-input
-          id="feedback-code"
-          v-model="code"
-          :state="validationCode"
-          type="number"
+          id="feedback-document"
+          v-model="document_number"
+          :state="validationDocumentNumber"
+          type="text"
           :disabled="disabledElements"
-          required
-        />
-        <b-form-invalid-feedback :state="validationCode">
+          required>
+        </b-form-input>
+        <b-form-invalid-feedback :state="validationDocumentNumber">
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
@@ -40,23 +40,54 @@
         </b-form-invalid-feedback>
       </b-form-group>
       <b-form-group>
-        <label for="feedback-zone" class="mt-3">Zona</label>
+        <label for="feedback-phone" class="mt-3">Teléfono</label>
+        <b-form-input
+          id="feedback-phone"
+          v-model="phone"
+          :state="validationPhone"
+          type="text"
+          :disabled="disabledElements"
+          required>
+        </b-form-input>
+        <b-form-invalid-feedback :state="validationPhone">
+          {{ labelTextFieldRequired }}
+        </b-form-invalid-feedback>
+      </b-form-group>
+      <b-form-group>
+        <label for="feedback-yars" class="mt-3">Patio</label>
         <v-select
-          v-if="zones && zones.data"
+          v-if="yards && yards.data"
           :filterable="false"
-          id="feedback-zone"
+          id="feedback-yard"
           :disabled="disabledElements"
           required
-          v-model="zone"
-          :options="zones.data"
+          v-model="yard"
+          :options="yards.data"
           label="name"
           :reduce="data => data.id"
-          @search="searchZones"
-          @close="searchZones"
+          @search="searchYards"
+          @close="searchYards"
         />
         <b-form-invalid-feedback>
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
+      </b-form-group>
+      <b-form-group>
+        <label for="feedback-role" class="mt-3">Rol</label>
+        <b-card class="text-center">
+          <b-form-checkbox-group
+            v-if="role_list"
+            id="feedback-role"
+            v-model="role"
+            :options="role_list"
+            value-field="name"
+            text-field="name"
+            stacked
+          ></b-form-checkbox-group>
+        </b-card>
+      <b-form-invalid-feedback>
+          {{ labelTextFieldRequired }}
+      </b-form-invalid-feedback>
       </b-form-group>
       <b-button
         id="button-submit"
@@ -64,7 +95,7 @@
         href="#"
         variant="primary"
         class="mt-3 form-control"
-        :disabled="!validationCode || !validationName || !validationZone"
+        :disabled="!validationDocumentNumber || !validationName"
         @click="handleForm">
         {{ textBtnSubmit }}
       </b-button>
@@ -85,20 +116,22 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesYard as types } from '@/store/yard/types';
-import { typesZone } from '@/store/zone/types';
+import { typesUser as types } from '@/store/user/types';
+import { typesYard } from '@/store/yard/types';
 import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
   data () {
     return {
-      id: 'yard-modal',
-      title: 'Crear Patio',
+      id: 'user-modal',
+      title: 'Crear usuario',
       textBtnSubmit: 'Registrar',
-      code: '',
+      document_number: '',
       name: '',
-      zone: '',
-      searchInput: '',
+      phone: '',
+      yard: '',
+      role: [],
+      role_list: [],
       labelTextFieldRequired: 'Campo obligatorio',
       disabledElements: false
     };
@@ -106,34 +139,40 @@ export default {
   watch: {
     typeAction (val) {
       if (val === 'create') {
-        this.title = 'Crear Patio';
-        this.id = 'create-yard-modal';
+        this.title = 'Crear Usuario';
+        this.id = 'create-user-modal';
         this.textBtnSubmit = 'Registrar';
         this.disabledElements = false;
       }
       if (val === 'edit') {
-        this.title = 'Modificar Patio';
-        this.id = 'edit-yard-modal';
+        this.title = 'Modificar Usuario';
+        this.id = 'edit-user-modal';
         this.textBtnSubmit = 'Guardar cambios';
         this.disabledElements = false;
       }
       if (val === 'delete') {
-        this.title = 'Eliminar Patio';
-        this.id = 'delete-yard-modal';
+        this.title = 'Eliminar Usuario';
+        this.id = 'delete-user-modal';
         this.textBtnSubmit = 'Eliminar';
         this.disabledElements = true;
       }
     },
-    yard (val) {
+    user (val) {
       if (this.typeAction === 'create') {
-        this.code = '';
+        this.document_number = '';
         this.name = '';
-        this.zone = '';
+        this.phone = '';
+        this.role = [];
+        this.yard = '';
       }
       if (this.typeAction === 'edit' || this.typeAction === 'delete') {
-        this.code = val.code;
+        this.document_number = val.documentNumber;
+        this.phone = val.phoneNumber;
+        this.role = val.role;
         this.name = val.name;
-        this.zone = parseInt(val.zone);
+        this.yard = parseInt(val.yard);
+        this.role_list = val.roleList;
+        console.log(this.role_list);
       }
     }
   },
@@ -143,20 +182,20 @@ export default {
   computed: {
     ...mapState(types.PATH, [
       'showModalForm',
-      'yard',
+      'user',
       'typeAction'
     ]),
-    ...mapState(typesZone.PATH, [
-      'zones'
+    ...mapState(typesYard.PATH, [
+      'yards'
     ]),
-    validationCode () {
-      return this.code.length > 0;
+    validationDocumentNumber () {
+      return this.document_number.length > 0;
     },
     validationName () {
       return this.name.length > 0;
     },
-    validationZone () {
-      return this.zone;
+    validationPhone () {
+      return this.phone.length > 0;
     }
   },
   mounted () {
@@ -168,45 +207,47 @@ export default {
       delete: types.actions.DELETE,
       edit: types.actions.EDIT
     }),
-    ...mapActions(typesZone.PATH, {
-      getZones: typesZone.actions.GET_ZONES
+    ...mapActions(typesYard.PATH, {
+      getYards: typesYard.actions.GET_YARDS
     }),
     resetInfoModal () {
       this.name = '';
-      this.code = '';
-      this.zone = '';
+      this.document_number = '';
       this.setShowModalForm(false);
     },
     async handleForm (event) {
       event.preventDefault();
       if (this.typeAction === 'create') {
         await this.save({
-          code: this.code,
+          document_number: this.document_number,
           name: this.name,
-          zone: this.zone
+          phone: this.phone,
+          yard: this.yard,
+          role: this.role
         });
       }
       if (this.typeAction === 'edit') {
         await this.edit({
-          id: this.yard.id,
-          code: this.code,
+          id: this.user.id,
+          document_number: this.document_number,
           name: this.name,
-          zone: this.zone
+          phone: this.phone,
+          yard: this.yard,
+          role: this.role
         });
       }
       if (this.typeAction === 'delete') {
-        await this.delete(this.yard.id);
+        await this.delete(this.user.id);
       }
     },
-    searchZones (search) {
+    searchYards (search) {
       const data = {
         perPage: 10,
         page: 1,
         text: search,
-        zone: this.zone,
-        loaderState: false
+        yard: this.yard
       };
-      this.getZones(data);
+      this.getYards(data);
     }
   }
 };

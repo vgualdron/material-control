@@ -20,9 +20,12 @@
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.9.1",
+    "fuse.js": "^6.4.6",
     "nodemon": "^2.0.7",
     "nuxt": "^2.15.3",
-    "nuxt-i18n": "^6.27.3"
+    "nuxt-i18n": "^6.27.3",
+    "nuxt-vue-select": "^0.1.4",
+    "vue-select": "^3.12.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",

@@ -7,7 +7,7 @@ const envConfig = environmentConfig[env];
 export default class ZoneApi {
   async get (data) {
     return await axios.get(
-      `${envConfig.urlApi}/${endpoints.primary}/${data?.perPage ?? 10}/${data?.page ?? 1}/${encodeURIComponent(data?.text ? data.text : ' ')}`,
+      `${envConfig.urlApi}/${endpoints.primary}/${data?.perPage ?? 10}/${data?.page ?? 1}/${encodeURIComponent(data?.text ? data.text : ' ')}/${encodeURIComponent(data?.zone ? data.zone : 0)}`,
       {
         headers: AuthHeader()
       }

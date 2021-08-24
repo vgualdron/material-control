@@ -1,31 +1,27 @@
-import YardApi from '@/api/yard/YardApi';
+import UserApi from '@/api/user/UserApi';
 import { typesCommon } from '@/store/common/typesCommon';
-import { typesYard as types } from './types';
-const yardApi = new YardApi();
+import { typesUser as types } from './types';
+const userApi = new UserApi();
 const actions = {
-  async [types.actions.GET_YARDS] ({ commit, dispatch }, data) {
+  async [types.actions.GET_USERS] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await yardApi.get(data).then((res) => {
-      commit(types.mutations.SET_YARDS, res.data);
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
+    await userApi.get(data).then((res) => {
+      commit(types.mutations.SET_USERS, res.data);
     }).catch((error) => {
       console.log(error);
+    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    })/* .finally((e) => {
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    }) */;
+    });
   },
-  async [types.actions.SET_YARD] ({ commit, dispatch }, data) {
+  async [types.actions.SET_USER] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await yardApi.getById(data.id).then((res) => {
-      commit(types.mutations.SET_YARD, res.data);
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
+    await userApi.getById(data.id).then((res) => {
+      commit(types.mutations.SET_USER, res.data);
     }).catch((error) => {
       console.log(error);
+    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    })/* .finally((e) => {
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    }) */;
+    });
   },
   [types.actions.SET_SHOW_MODAL_FORM] ({ commit }, data) {
     commit(types.mutations.SET_SHOW_MODAL_FORM, data);
@@ -35,9 +31,9 @@ const actions = {
   },
   async [types.actions.SAVE] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await yardApi.save(data).then((resp) => {
+    await userApi.save(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_YARDS}`);
+      dispatch(`${types.actions.GET_USERS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
@@ -47,9 +43,9 @@ const actions = {
   },
   async [types.actions.EDIT] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await yardApi.edit(data).then((resp) => {
+    await userApi.edit(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_YARDS}`);
+      dispatch(`${types.actions.GET_USERS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
@@ -59,9 +55,9 @@ const actions = {
   },
   async [types.actions.DELETE] ({ commit, dispatch }, id) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await yardApi.delete(id).then((resp) => {
+    await userApi.delete(id).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_YARDS}`);
+      dispatch(`${types.actions.GET_USERS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });

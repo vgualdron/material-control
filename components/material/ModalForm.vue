@@ -1,16 +1,16 @@
 <template>
   <b-modal
-    :id="id"
     v-model="showModalForm"
+    :id="id"
     no-close-on-backdrop
     no-close-on-esc
-    @hide="resetInfoModal"
-  >
+    @hide="resetInfoModal">
     <template #modal-header>
       <h5>{{ title }}</h5>
-      <b-icon-x class="icon-close" font-scale="2" @click="resetInfoModal()" />
+      <b-icon-x @click="resetInfoModal()" class="icon-close" font-scale="2"></b-icon-x>
     </template>
-    <b-form @submit="handleForm">
+    <b-form
+      @submit="handleForm">
       <b-form-group>
         <label for="feedback-code">Código</label>
         <b-form-input
@@ -19,8 +19,8 @@
           :state="validationCode"
           type="number"
           :disabled="disabledElements"
-          required
-        />
+          required>
+        </b-form-input>
         <b-form-invalid-feedback :state="validationCode">
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
@@ -40,23 +40,15 @@
         </b-form-invalid-feedback>
       </b-form-group>
       <b-form-group>
-        <label for="feedback-zone" class="mt-3">Zona</label>
-        <v-select
-          v-if="zones && zones.data"
-          :filterable="false"
-          id="feedback-zone"
+        <label for="feedback-unit" class="mt-3">Unidad</label>
+        <b-form-select
+          id="feedback-unit"
+          v-model="unit"
+          :options="units"
+          type="text"
           :disabled="disabledElements"
-          required
-          v-model="zone"
-          :options="zones.data"
-          label="name"
-          :reduce="data => data.id"
-          @search="searchZones"
-          @close="searchZones"
-        />
-        <b-form-invalid-feedback>
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
+          required>
+        </b-form-select>
       </b-form-group>
       <b-button
         id="button-submit"
@@ -64,7 +56,7 @@
         href="#"
         variant="primary"
         class="mt-3 form-control"
-        :disabled="!validationCode || !validationName || !validationZone"
+        :disabled="!validationCode || !validationName"
         @click="handleForm">
         {{ textBtnSubmit }}
       </b-button>
@@ -85,55 +77,57 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesYard as types } from '@/store/yard/types';
-import { typesZone } from '@/store/zone/types';
+import { typesMaterial as types } from '@/store/material/types';
 import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
   data () {
     return {
-      id: 'yard-modal',
-      title: 'Crear Patio',
+      id: 'material-modal',
+      title: 'Crear material',
       textBtnSubmit: 'Registrar',
       code: '',
       name: '',
-      zone: '',
-      searchInput: '',
+      unit: 'U',
       labelTextFieldRequired: 'Campo obligatorio',
-      disabledElements: false
+      disabledElements: false,
+      units: [
+        { value: 'U', text: 'Unidad' },
+        { value: 'T', text: 'Tonelada' }
+      ]
     };
   },
   watch: {
     typeAction (val) {
       if (val === 'create') {
-        this.title = 'Crear Patio';
-        this.id = 'create-yard-modal';
+        this.title = 'Crear Material';
+        this.id = 'create-material-modal';
         this.textBtnSubmit = 'Registrar';
         this.disabledElements = false;
       }
       if (val === 'edit') {
-        this.title = 'Modificar Patio';
-        this.id = 'edit-yard-modal';
+        this.title = 'Modificar Material';
+        this.id = 'edit-material-modal';
         this.textBtnSubmit = 'Guardar cambios';
         this.disabledElements = false;
       }
       if (val === 'delete') {
-        this.title = 'Eliminar Patio';
-        this.id = 'delete-yard-modal';
+        this.title = 'Eliminar Material';
+        this.id = 'delete-material-modal';
         this.textBtnSubmit = 'Eliminar';
         this.disabledElements = true;
       }
     },
-    yard (val) {
+    material (val) {
       if (this.typeAction === 'create') {
         this.code = '';
         this.name = '';
-        this.zone = '';
+        this.unit = '';
       }
       if (this.typeAction === 'edit' || this.typeAction === 'delete') {
         this.code = val.code;
         this.name = val.name;
-        this.zone = parseInt(val.zone);
+        this.unit = val.unit;
       }
     }
   },
@@ -143,20 +137,14 @@ export default {
   computed: {
     ...mapState(types.PATH, [
       'showModalForm',
-      'yard',
+      'material',
       'typeAction'
-    ]),
-    ...mapState(typesZone.PATH, [
-      'zones'
     ]),
     validationCode () {
       return this.code.length > 0;
     },
     validationName () {
       return this.name.length > 0;
-    },
-    validationZone () {
-      return this.zone;
     }
   },
   mounted () {
@@ -168,13 +156,9 @@ export default {
       delete: types.actions.DELETE,
       edit: types.actions.EDIT
     }),
-    ...mapActions(typesZone.PATH, {
-      getZones: typesZone.actions.GET_ZONES
-    }),
     resetInfoModal () {
       this.name = '';
       this.code = '';
-      this.zone = '';
       this.setShowModalForm(false);
     },
     async handleForm (event) {
@@ -183,30 +167,20 @@ export default {
         await this.save({
           code: this.code,
           name: this.name,
-          zone: this.zone
+          unit: this.unit
         });
       }
       if (this.typeAction === 'edit') {
         await this.edit({
-          id: this.yard.id,
+          id: this.material.id,
           code: this.code,
           name: this.name,
-          zone: this.zone
+          unit: this.unit
         });
       }
       if (this.typeAction === 'delete') {
-        await this.delete(this.yard.id);
+        await this.delete(this.material.id);
       }
-    },
-    searchZones (search) {
-      const data = {
-        perPage: 10,
-        page: 1,
-        text: search,
-        zone: this.zone,
-        loaderState: false
-      };
-      this.getZones(data);
     }
   }
 };

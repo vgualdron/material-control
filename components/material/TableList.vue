@@ -1,7 +1,7 @@
 <template>
   <b-card
-    title="Gestionar patios"
-    sub-title="Opciones de listar, crear, modificar y eliminar patios">
+    title="Gestionar materiales"
+    sub-title="Opciones de listar, crear, modificar y eliminar materiales">
     <!-- User Interface controls -->
     <b-row>
       <b-col lg="12" class="my-1">
@@ -50,15 +50,9 @@
         <template #row-details="row">
           <b-card>
             <ul>
-              <div>
-                <li>
-                  <b>Código:</b> {{ row.item.code }}
-                </li>
-                <li>
-                  <b>Nombre:</b> {{ row.item.name }}
-                </li>
-                <li>
-                  <b>Zona:</b> {{ row.item.zoneName }}
+              <div v-for="(value, key) in row.item" :key="key">
+                <li v-if="key !== '_showDetails'">
+                  {{ key }}: {{ value }}
                 </li>
               </div>
             </ul>
@@ -106,8 +100,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesYard as types } from '@/store/yard/types';
-import { typesZone } from '@/store/zone/types';
+import { typesMaterial as types } from '@/store/material/types';
 import { typesCommon } from '@/store/common/typesCommon';
 import { BIconPencilFill, BIconTrashFill } from 'bootstrap-vue';
 import { inArray } from '@/helpers/common/array';
@@ -120,11 +113,10 @@ export default {
   },
   data () {
     return {
-      view: 'yard',
+      view: 'material',
       fields: [
         { key: 'code', label: 'Código', sortable: true, class: 'text-center' },
         { key: 'name', label: 'Nombre', sortable: true, class: 'text-center' },
-        { key: 'zoneName', label: 'Zona', sortable: true, class: 'text-center' },
         { key: 'actions', label: 'Acciones', class: 'text-center' }
       ],
       totalRows: 1,
@@ -142,11 +134,11 @@ export default {
       'userPermisionsGroup'
     ]),
     ...mapState(types.PATH, [
-      'yards',
-      'yard'
+      'materials',
+      'material'
     ]),
     items () {
-      return this.yards.data.map((item) => {
+      return this.materials.data.map((item) => {
         return {
           ...item,
           showDetail: inArray(`${this.view}.get`, this.userPermisionsGroup),
@@ -165,7 +157,7 @@ export default {
     }
   },
   watch: {
-    yards (val) {
+    materials (val) {
       this.totalRows = val.total;
       this.showInsert = inArray(`${this.view}.insert`, this.userPermisionsGroup);
       this.showList = inArray(`${this.view}.list`, this.userPermisionsGroup);
@@ -176,27 +168,17 @@ export default {
   },
   methods: {
     ...mapActions(types.PATH, {
-      getYards: types.actions.GET_YARDS,
-      setYard: types.actions.SET_YARD,
+      getMaterials: types.actions.GET_MATERIALS,
+      setMaterial: types.actions.SET_MATERIAL,
       setShowModalForm: types.actions.SET_SHOW_MODAL_FORM,
       setTypeAction: types.actions.SET_TYPE_ACTION
     }),
-    ...mapActions(typesZone.PATH, {
-      getZones: typesZone.actions.GET_ZONES
-    }),
-    async showModal (item, action) {
+    showModal (item, action) {
+      if (action !== 'create') {
+        this.setMaterial({ ...item });
+      }
       this.setTypeAction(action);
       this.setShowModalForm(true);
-      const data = {
-        perPage: 10,
-        page: 1,
-        text: '',
-        zone: item?.zone
-      };
-      await this.getZones(data);
-      if (action !== 'create') {
-        await this.setYard({ ...item });
-      }
     },
     search () {
       const data = {
@@ -204,7 +186,7 @@ export default {
         page: this.currentPage,
         text: this.filter
       };
-      this.getYards(data);
+      this.getMaterials(data);
     }
   }
 };

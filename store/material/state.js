@@ -1,6 +1,6 @@
 const state = {
-  yards: [],
-  yard: null,
+  materials: [],
+  material: null,
   showModalForm: false,
   typeAction: 'create'
 };
