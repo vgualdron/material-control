@@ -12,4 +12,8 @@ export default class PermisionApi {
   async getPermisionsBySesionGroup () {
     return await axios.get(`${envConfig.urlApi}/${endpoints.listBySesionGroup}`, { headers: AuthHeader() });
   }
+
+  async getPermissionsGroup () {
+    return await axios.get(`${envConfig.urlApi}/${endpoints.listByGroup}`, { headers: AuthHeader() });
+  }
 }

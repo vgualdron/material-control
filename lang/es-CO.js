@@ -5,5 +5,6 @@ export default {
   user: 'usuario',
   yard: 'patio',
   zone: 'zona',
+  role: 'rol',
   logout: 'cerrar sesión'
 };

@@ -12,6 +12,9 @@ const mutations = {
   [types.mutations.SET_USER_PERMISIONS_GROUP] (state, payload) {
     state.userPermisionsGroup = payload;
   },
+  [types.mutations.SET_PERMISSIONS_GROUP] (state, payload) {
+    state.permissionsGroup = payload;
+  },
   [types.mutations.SET_TOAST] (state, payload) {
     state.toast = payload;
   }

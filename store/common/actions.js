@@ -42,6 +42,17 @@ const actions = {
       commit(types.mutations.SET_LOADER_STATUS, false);
     });
   },
+  [types.actions.SET_PERMISSIONS_GROUP] ({ commit }, data) {
+    commit(types.mutations.SET_PERMISSIONS_GROUP, data);
+  },
+  [types.actions.GET_PERMISSIONS_GROUP] ({ commit, dispatch }) {
+    commit(types.mutations.SET_LOADER_STATUS, false);
+    permisionApi.getPermissionsGroup().then((res) => {
+      dispatch(types.actions.SET_PERMISSIONS_GROUP, res.data);
+    }).catch((error) => {
+      alert(error);
+    });
+  },
   [types.actions.SET_TOAST] ({ commit }, data) {
     const toast = createToast(data);
     commit(types.mutations.SET_TOAST, toast);

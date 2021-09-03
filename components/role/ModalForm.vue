@@ -1,64 +1,42 @@
 <template>
   <b-modal
-    :id="id"
     v-model="showModalForm"
+    :id="id"
     no-close-on-backdrop
     no-close-on-esc
-    @hide="resetInfoModal"
-  >
+    @hide="resetInfoModal">
     <template #modal-header>
       <h5>{{ title }}</h5>
-      <b-icon-x class="icon-close" font-scale="2" @click="resetInfoModal()" />
+      <b-icon-x @click="resetInfoModal()" class="icon-close" font-scale="2"></b-icon-x>
     </template>
-    <b-form @submit="handleForm">
+    <b-form
+      @submit="handleForm">
       <b-form-group>
-        <label for="feedback-code">Código</label>
-        <b-form-input
-          id="feedback-code"
-          v-model="code"
-          :state="validationCode"
-          type="text"
-          :disabled="disabledElements"
-          v-mask="'##AA'"
-          required
-        />
-        <b-form-invalid-feedback :state="validationCode">
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group>
-        <label for="feedback-name" class="mt-3">Nombre</label>
+        <label for="feedback-name">Nombre</label>
         <b-form-input
           id="feedback-name"
           v-model="name"
           :state="validationName"
-          type="text"
           :disabled="disabledElements"
-          :formatter="upperFormatter"
           required>
         </b-form-input>
         <b-form-invalid-feedback :state="validationName">
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group>
-        <label for="feedback-zone" class="mt-3">Zona</label>
-        <v-select
-          v-if="zones && zones.data"
-          :filterable="false"
-          id="feedback-zone"
-          :disabled="disabledElements"
-          required
-          v-model="zone"
-          :options="zones.data"
-          label="name"
-          :reduce="data => data.id"
-          @search="searchZones"
-          @close="searchZones"
-        />
-        <b-form-invalid-feedback>
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
+      <b-form-group v-if="permissionsGroup">
+        <label for="feedback-permissions">Permisos</label>
+        <b-card>
+          <b-form-checkbox
+            v-for="item in permissionsGroup"
+            v-model="permissions"
+            name="role-permission"
+            :value="item.name"
+            :key="item.id"
+            :disabled="disabledElements"
+          >{{item.displayName}}
+          </b-form-checkbox>
+        </b-card>
       </b-form-group>
       <b-button
         id="button-submit"
@@ -66,7 +44,7 @@
         href="#"
         variant="primary"
         class="mt-3 form-control"
-        :disabled="!validationCode || !validationName || !validationZone"
+        :disabled="!validationName"
         @click="handleForm">
         {{ textBtnSubmit }}
       </b-button>
@@ -87,20 +65,19 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesYard as types } from '@/store/yard/types';
-import { typesZone } from '@/store/zone/types';
+import { typesCommon } from '@/store/common/typesCommon';
+import { typesRole as types } from '@/store/role/types';
 import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
   data () {
     return {
-      id: 'yard-modal',
-      title: 'Crear Patio',
+      id: 'role-modal',
+      title: 'Crear rol',
       textBtnSubmit: 'Registrar',
-      code: '',
       name: '',
-      zone: '',
-      searchInput: '',
+      guard_name: 'api',
+      permissions: [],
       labelTextFieldRequired: 'Campo obligatorio',
       disabledElements: false
     };
@@ -108,34 +85,32 @@ export default {
   watch: {
     typeAction (val) {
       if (val === 'create') {
-        this.title = 'Crear Patio';
-        this.id = 'create-yard-modal';
+        this.title = 'Crear Rol';
+        this.id = 'create-role-modal';
         this.textBtnSubmit = 'Registrar';
         this.disabledElements = false;
       }
       if (val === 'edit') {
-        this.title = 'Modificar Patio';
-        this.id = 'edit-yard-modal';
+        this.title = 'Modificar Rol';
+        this.id = 'edit-role-modal';
         this.textBtnSubmit = 'Guardar cambios';
         this.disabledElements = false;
       }
       if (val === 'delete') {
-        this.title = 'Eliminar Patio';
-        this.id = 'delete-yard-modal';
+        this.title = 'Eliminar Rol';
+        this.id = 'delete-role-modal';
         this.textBtnSubmit = 'Eliminar';
         this.disabledElements = true;
       }
     },
-    yard (val) {
+    role (val) {
       if (this.typeAction === 'create') {
-        this.code = '';
         this.name = '';
-        this.zone = '';
+        this.permissions = [];
       }
       if (this.typeAction === 'edit' || this.typeAction === 'delete') {
-        this.code = val.code;
         this.name = val.name;
-        this.zone = parseInt(val.zone);
+        this.permissions = val.permissions;
       }
     }
   },
@@ -145,20 +120,14 @@ export default {
   computed: {
     ...mapState(types.PATH, [
       'showModalForm',
-      'yard',
+      'role',
       'typeAction'
     ]),
-    ...mapState(typesZone.PATH, [
-      'zones'
+    ...mapState(typesCommon.PATH, [
+      'permissionsGroup'
     ]),
-    validationCode () {
-      return this.code.length > 0;
-    },
     validationName () {
       return this.name.length > 0;
-    },
-    validationZone () {
-      return this.zone;
     }
   },
   mounted () {
@@ -170,48 +139,31 @@ export default {
       delete: types.actions.DELETE,
       edit: types.actions.EDIT
     }),
-    ...mapActions(typesZone.PATH, {
-      getZones: typesZone.actions.GET_ZONES
-    }),
     resetInfoModal () {
       this.name = '';
-      this.code = '';
-      this.zone = '';
+      this.permissions = [];
       this.setShowModalForm(false);
     },
     async handleForm (event) {
       event.preventDefault();
       if (this.typeAction === 'create') {
         await this.save({
-          code: this.code,
           name: this.name,
-          zone: this.zone
+          guard_name: this.guard_name,
+          permissions: this.permissions
         });
       }
       if (this.typeAction === 'edit') {
         await this.edit({
-          id: this.yard.id,
-          code: this.code,
+          id: this.role.id,
           name: this.name,
-          zone: this.zone
+          guard_name: this.guard_name,
+          permissions: this.permissions
         });
       }
       if (this.typeAction === 'delete') {
-        await this.delete(this.yard.id);
+        await this.delete(this.role.id);
       }
-    },
-    searchZones (search) {
-      const data = {
-        perPage: 10,
-        page: 1,
-        text: search,
-        zone: this.zone,
-        loaderState: false
-      };
-      this.getZones(data);
-    },
-    upperFormatter (value) {
-      return value.toUpperCase();
     }
   }
 };

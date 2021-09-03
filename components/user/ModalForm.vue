@@ -72,22 +72,22 @@
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group>
+      <b-form-group v-if="roles && roles.data && roles.data.length > 0">
         <label for="feedback-role" class="mt-3">Rol</label>
-        <b-card class="text-center">
-          <b-form-checkbox-group
-            v-if="role_list"
-            id="feedback-role"
+        <b-card>
+          <b-form-checkbox
+            v-for="item in roles.data"
             v-model="role"
-            :options="role_list"
-            value-field="name"
-            text-field="name"
-            stacked
-          ></b-form-checkbox-group>
+            name="user-role"
+            :value="item.name"
+            :key="item.id"
+            :disabled="disabledElements"
+          >{{item.name}}
+          </b-form-checkbox>
         </b-card>
-      <b-form-invalid-feedback>
-          {{ labelTextFieldRequired }}
-      </b-form-invalid-feedback>
+        <b-form-invalid-feedback>
+            {{ labelTextFieldRequired }}
+        </b-form-invalid-feedback>
       </b-form-group>
       <b-button
         id="button-submit"
@@ -118,6 +118,7 @@
 import { mapState, mapActions } from 'vuex';
 import { typesUser as types } from '@/store/user/types';
 import { typesYard } from '@/store/yard/types';
+import { typesRole } from '@/store/role/types';
 import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
@@ -131,7 +132,6 @@ export default {
       phone: '',
       yard: '',
       role: [],
-      role_list: [],
       labelTextFieldRequired: 'Campo obligatorio',
       disabledElements: false
     };
@@ -171,8 +171,6 @@ export default {
         this.role = val.role;
         this.name = val.name;
         this.yard = parseInt(val.yard);
-        this.role_list = val.roleList;
-        console.log(this.role_list);
       }
     }
   },
@@ -187,6 +185,9 @@ export default {
     ]),
     ...mapState(typesYard.PATH, [
       'yards'
+    ]),
+    ...mapState(typesRole.PATH, [
+      'roles'
     ]),
     validationDocumentNumber () {
       return this.document_number.length > 0;
@@ -213,6 +214,7 @@ export default {
     resetInfoModal () {
       this.name = '';
       this.document_number = '';
+      this.role = [];
       this.setShowModalForm(false);
     },
     async handleForm (event) {

@@ -3,6 +3,7 @@ const state = {
   loaderStatus: false,
   userPermisions: [],
   userPermisionsGroup: [],
+  permissionsGroup: [],
   toast: {
     title: 'Title',
     content: 'Content',

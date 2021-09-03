@@ -5,5 +5,6 @@ export default {
   user: 'user',
   yard: 'yard',
   zone: 'zone',
+  role: 'role ',
   logout: 'logout'
 };

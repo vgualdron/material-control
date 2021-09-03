@@ -17,8 +17,9 @@
           id="feedback-code"
           v-model="code"
           :state="validationCode"
-          type="number"
+          type="text"
           :disabled="disabledElements"
+          v-mask="'AA'"
           required>
         </b-form-input>
         <b-form-invalid-feedback :state="validationCode">
@@ -32,6 +33,7 @@
         :state="validationName"
         type="text"
         :disabled="disabledElements"
+        :formatter="upperFormatter"
         required>
       </b-form-input>
       <b-form-invalid-feedback :state="validationName">
@@ -159,6 +161,9 @@ export default {
       if (this.typeAction === 'delete') {
         await this.delete(this.zone.id);
       }
+    },
+    upperFormatter (value) {
+      return value.toUpperCase();
     }
   }
 };
