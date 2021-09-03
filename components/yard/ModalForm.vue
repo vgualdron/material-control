@@ -19,7 +19,7 @@
           :state="validationCode"
           type="text"
           :disabled="disabledElements"
-          v-mask="'##AA'"
+          v-mask="'AA##'"
           required
         />
         <b-form-invalid-feedback :state="validationCode">
