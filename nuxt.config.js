@@ -94,9 +94,13 @@ export default {
   },
   proxy: {
     '/api': {
-      target:  envConfig.url
+      target:  envConfig.url,
+      changeOrigin: true
     },
-    changeOrigin: true
+    '/token': {
+      target:  envConfig.url,
+      changeOrigin: true
+    }
   },
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {

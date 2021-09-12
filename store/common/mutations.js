@@ -8,9 +8,11 @@ const mutations = {
   },
   [types.mutations.SET_USER_PERMISIONS] (state, payload) {
     state.userPermisions = payload;
+    localStorage.setItem('userPermisions', JSON.stringify(payload));
   },
   [types.mutations.SET_USER_PERMISIONS_GROUP] (state, payload) {
     state.userPermisionsGroup = payload;
+    localStorage.setItem('userPermisionsGroup', JSON.stringify(payload));
   },
   [types.mutations.SET_PERMISSIONS_GROUP] (state, payload) {
     state.permissionsGroup = payload;

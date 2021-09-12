@@ -18,7 +18,6 @@ const actions = {
     await authApi.login(data).then((res) => {
       commit(types.mutations.SET_AUTHORIZATION_TOKEN, res.data);
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_ROUTER_ACTIVE}`, '/', { root: true });
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_USER}`, res.data, { root: true });
     }).catch((error) => {
       console.error(error);
     }).finally((e) => {
@@ -31,6 +30,9 @@ const actions = {
   },
   [types.actions.SET_USER_PERMISIONS] ({ commit }, data) {
     commit(types.mutations.SET_USER_PERMISIONS, data);
+  },
+  [types.actions.LOGOUT] ({ commit }, data) {
+    commit(types.mutations.SET_AUTHORIZATION_TOKEN, data);
   }
 };
 export default actions;

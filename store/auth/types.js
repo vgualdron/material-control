@@ -13,6 +13,7 @@ export const typesAuth = {
   actions: {
     GET_ACTIVE_TOKEN: '@actions/getActiveToken',
     LOGIN: '@actions/login',
+    LOGOUT: '@actions/logout',
     SET_AUTHORIZATION_TOKEN: '@actions/setAuthorizationToken'
   }
 };

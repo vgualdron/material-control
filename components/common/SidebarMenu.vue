@@ -62,14 +62,15 @@ export default {
       getUserPermisionsGroup: typesCommon.actions.GET_USER_PERMISIONS_GROUP
     }),
     ...mapActions(typesAuth.PATH, {
-      setAuthorizationToken: typesAuth.actions.SET_AUTHORIZATION_TOKEN
+      setAuthorizationToken: typesAuth.actions.SET_AUTHORIZATION_TOKEN,
+      logout: typesAuth.actions.LOGOUT
     }),
     go (router) {
       this.setRouterActive(router);
     },
     close (router) {
       this.setRouterActive(router);
-      this.setAuthorizationToken({});
+      this.logout({});
     },
     toCapitalCaseText (text) {
       return toCapitalCase(text);
