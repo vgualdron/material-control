@@ -20,6 +20,9 @@
         <button @click="sync">SINCRONIZAR</button>
       </div>
       <div class="columns is-mobile mt-3">
+        <button @click="setDataToServer">ENVIAR TIQUETS</button>
+      </div>
+      <div class="columns is-mobile mt-3">
         {{ JSON.stringify(token) }}
       </div>
     </section>
@@ -29,6 +32,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import { typesSynchronize } from '@/store/synchronize/types';
+import { typesTiquet } from '@/store/tiquet/types';
 export default {
   name: 'Home',
   layout: 'menu',
@@ -41,13 +45,20 @@ export default {
   computed: {
     ...mapState('auth', [
       'token'
+    ]),
+    ...mapState(typesTiquet.PATH, [
+      'tiquets'
     ])
   },
   async mounted () {
   },
   methods: {
     ...mapActions(typesSynchronize.PATH, {
-      sync: typesSynchronize.actions.GET_DATA_FROM_SERVER
+      sync: typesSynchronize.actions.GET_DATA_FROM_SERVER,
+      setData: typesSynchronize.actions.SET_DATA_TO_SERVER
+    }),
+    ...mapActions(typesTiquet.PATH, {
+      getNotSynchronizedTiquets: typesTiquet.actions.GET_NOT_SYNCHRONIZED_TIQUETS
     }),
     async handleFormResult () {
       await this.login();
@@ -73,6 +84,10 @@ export default {
       } catch (e) {
         console.log(e);
       }
+    },
+    async setDataToServer () {
+      await this.getNotSynchronizedTiquets();
+      await this.setData(this.tiquets);
     }
   }
 };

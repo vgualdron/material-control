@@ -14,7 +14,6 @@ const createToast = (response) => {
     toast.title = 'Éxito';
     toast.content = data ? data.message : 'OK';
   }
-  console.log(toast);
   return toast;
 };
 

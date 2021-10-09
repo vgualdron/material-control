@@ -131,6 +131,7 @@ export default {
       name: '',
       phone: '',
       yard: '',
+      conveyor_company: '',
       role: [],
       labelTextFieldRequired: 'Campo obligatorio',
       disabledElements: false

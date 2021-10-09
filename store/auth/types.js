@@ -8,13 +8,15 @@ export const typesAuth = {
   },
   mutations: {
     SET_AUTHORIZATION_TOKEN: '@mutations/setAuthorizationToken',
-    SET_ACTIVE_TOKEN: '@mutations/setActiveToken'
+    SET_ACTIVE_TOKEN: '@mutations/setActiveToken',
+    SET_DATA_SESSION: '@mutations/setDataSession'
   },
   actions: {
     GET_ACTIVE_TOKEN: '@actions/getActiveToken',
     LOGIN: '@actions/login',
     LOGOUT: '@actions/logout',
-    SET_AUTHORIZATION_TOKEN: '@actions/setAuthorizationToken'
+    SET_AUTHORIZATION_TOKEN: '@actions/setAuthorizationToken',
+    GET_DATA_SESSION: '@getters/getDataSession'
   }
 };
 

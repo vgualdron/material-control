@@ -1,6 +1,7 @@
 import axios from 'axios';
 import endpoints from '@/api/auth/endpoints';
 import environmentConfig from '@/config/env.config';
+import AuthHeader from '@/helpers/common/AuthHelper';
 const env = process.env.NODE_ENV;
 const envConfig = environmentConfig[env];
 export default class AuthApi {
@@ -17,5 +18,9 @@ export default class AuthApi {
       username: data.username
     };
     return await axios.post(`${envConfig.urlApi}/${endpoints.login}`, body);
+  }
+
+  async get () {
+    return await axios.get(`${envConfig.urlApi}/${endpoints.primary}`, { headers: AuthHeader() });
   }
 }

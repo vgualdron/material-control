@@ -68,6 +68,20 @@ const actions = {
     }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
+  },
+  async [types.actions.GET_LOCALE_ORIGIN_YARDS] ({ commit, dispatch }, data) {
+    await yardApi.getLocale(data).then((res) => {
+      commit(types.mutations.SET_LOCALE_ORIGIN_YARDS, res);
+    }).catch((error) => {
+      console.log(error);
+    });
+  },
+  async [types.actions.GET_LOCALE_DESTINY_YARDS] ({ commit, dispatch }, data) {
+    await yardApi.getLocale(data).then((res) => {
+      commit(types.mutations.SET_LOCALE_DESTINY_YARDS, res);
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 };
 export default actions;

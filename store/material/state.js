@@ -1,5 +1,6 @@
 const state = {
   materials: [],
+  localeMaterials: [],
   material: null,
   showModalForm: false,
   typeAction: 'create'

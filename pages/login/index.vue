@@ -93,7 +93,8 @@ export default {
   methods: {
     ...mapActions(types.PATH, {
       getActiveToken: types.actions.GET_ACTIVE_TOKEN,
-      login: types.actions.LOGIN
+      login: types.actions.LOGIN,
+      getSession: types.actions.GET_DATA_SESSION
     }),
     async handleForm (event) {
       event.preventDefault();
@@ -103,6 +104,7 @@ export default {
         password: this.password
       };
       await this.login(data);
+      await this.getSession();
     }
   }
 };

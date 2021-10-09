@@ -33,6 +33,13 @@ const actions = {
   },
   [types.actions.LOGOUT] ({ commit }, data) {
     commit(types.mutations.SET_AUTHORIZATION_TOKEN, data);
+  },
+  async [types.actions.GET_DATA_SESSION] ({ commit, dispatch }) {
+    await authApi.get().then((res) => {
+      commit(types.mutations.SET_DATA_SESSION, res.data);
+    }).catch((error) => {
+      console.error(error);
+    });
   }
 };
 export default actions;

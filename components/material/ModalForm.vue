@@ -17,8 +17,9 @@
           id="feedback-code"
           v-model="code"
           :state="validationCode"
-          type="number"
+          type="text"
           :disabled="disabledElements"
+          v-mask="'A##'"
           required>
         </b-form-input>
         <b-form-invalid-feedback :state="validationCode">
@@ -32,8 +33,9 @@
           v-model="name"
           :state="validationName"
           type="text"
+          :formatter="upperFormatter"
           :disabled="disabledElements"
-          required>
+        >
         </b-form-input>
         <b-form-invalid-feedback :state="validationName">
           {{ labelTextFieldRequired }}
@@ -181,6 +183,9 @@ export default {
       if (this.typeAction === 'delete') {
         await this.delete(this.material.id);
       }
+    },
+    upperFormatter (value) {
+      return value.toUpperCase();
     }
   }
 };

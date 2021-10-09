@@ -7,6 +7,11 @@ const toCapitalCase = (text) => {
   );
 };
 
+const toUpperCase = (text) => {
+  return text.toUpperCase();
+};
+
 export {
-  toCapitalCase
+  toCapitalCase,
+  toUpperCase
 };

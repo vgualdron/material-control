@@ -2,6 +2,7 @@ import axios from 'axios';
 import endpoints from '@/api/yard/endpoints';
 import environmentConfig from '@/config/env.config';
 import AuthHeader from '@/helpers/common/AuthHelper';
+import { getYards } from '@/helpers/synchronize';
 const env = process.env.NODE_ENV;
 const envConfig = environmentConfig[env];
 export default class YardApi {
@@ -28,5 +29,9 @@ export default class YardApi {
 
   async edit (data) {
     return await axios.put(`${envConfig.urlApi}/${endpoints.primary}/${data.id}`, data, { headers: AuthHeader() });
+  }
+
+  async getLocale (data) {
+    return await getYards(data);
   }
 }

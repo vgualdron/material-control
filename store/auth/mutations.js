@@ -8,6 +8,10 @@ const mutations = {
   },
   [types.mutations.SET_ACTIVE_TOKEN] (state, payload) {
     state.activeToken = payload;
+  },
+  [types.mutations.SET_DATA_SESSION] (state, payload) {
+    state.dataSession = payload;
+    localStorage.setItem('dataSession', JSON.stringify(payload));
   }
 };
 export default mutations;

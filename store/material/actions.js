@@ -64,6 +64,13 @@ const actions = {
     }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
+  },
+  async [types.actions.GET_LOCALE_MATERIALS] ({ commit, dispatch }, data) {
+    await materialApi.getLocale(data).then((res) => {
+      commit(types.mutations.SET_LOCALE_MATERIALS, res);
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 };
 export default actions;

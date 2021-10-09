@@ -60,7 +60,7 @@
         </template>
       </b-table>
 
-      <b-row>
+      <!-- <b-row>
         <b-col sm="9" md="9" class="my-1" style="float: right;">
           <b-pagination
             v-model="currentPage"
@@ -93,7 +93,7 @@
             ></b-form-select>
           </b-form-group>
         </b-col>
-      </b-row>
+      </b-row> -->
     </template>
   </b-card>
 </template>
@@ -115,7 +115,7 @@ export default {
     return {
       view: 'tiquet',
       fields: [
-        { key: 'reference_number', label: 'Código', sortable: true, class: 'text-center' },
+        { key: 'receipt_number', label: 'Recibo', sortable: true, class: 'text-center' },
         { key: 'actions', label: 'Acciones', class: 'text-center' }
       ],
       totalRows: 1,
@@ -137,7 +137,7 @@ export default {
       'tiquet'
     ]),
     items () {
-      return this.tiquets.data.map((item) => {
+      return this.tiquets.map((item) => {
         return {
           ...item,
           showDetail: inArray(`${this.view}.get`, this.userPermisionsGroup),
@@ -157,7 +157,7 @@ export default {
   },
   watch: {
     tiquets (val) {
-      this.totalRows = val.total;
+      // this.totalRows = val.total;
       this.showInsert = inArray(`${this.view}.insert`, this.userPermisionsGroup);
       this.showList = inArray(`${this.view}.list`, this.userPermisionsGroup);
     }
