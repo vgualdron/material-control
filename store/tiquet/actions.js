@@ -30,7 +30,6 @@ const actions = {
     commit(types.mutations.SET_TYPE_ACTION, data);
   },
   async [types.actions.SAVE] ({ commit, dispatch }, data) {
-    console.log(data);
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
     await tiquetApi.save(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
@@ -61,7 +60,7 @@ const actions = {
       dispatch(`${types.actions.GET_TIQUETS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error, { root: true });
     }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });

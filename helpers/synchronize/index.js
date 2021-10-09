@@ -89,7 +89,9 @@ const getDataFromServer = (data) => {
         'observation varchar(200) DEFAULT NULL,' +
         'seals varchar(50) DEFAULT NULL,' +
         'round_trip int(1) DEFAULT 0,' +
-        'synchronize int(1) DEFAULT 1' +
+        'synchronize int(1) DEFAULT 1,' +
+        'synchronized int(1) DEFAULT 0,' +
+        'deleted int(1) DEFAULT 0' +
         ');'
       );
       tran.executeSql('CREATE TABLE user (' +
@@ -269,7 +271,7 @@ async function getTiquets (data) {
     return await new Promise((resolve) => {
       dataBase.transaction(function (tran) {
         const text = '%' + (data?.text ? data.text : '') + '%';
-        tran.executeSql('SELECT id, receipt_number FROM tiquet WHERE receipt_number LIKE ?', [text], function (tran, data) {
+        tran.executeSql('SELECT id, receipt_number FROM tiquet WHERE (receipt_number LIKE ? OR referral_number LIKE ?) AND deleted <> 1', [text, text], function (tran, data) {
           const result = [];
           for (let i = 0; i < data.rows.length; i++) {
             result.push(data.rows[i]);
@@ -324,6 +326,39 @@ async function insertTiquet (data) {
         resolve(response);
       }).catch(() => {
         const response = { status: 500, data: { message: 'Error al registrar tiquet', errors: { sql: ['Se ha presentado un error de SQL'] } } };
+        reject(response);
+      });
+    });
+  }
+}
+
+async function deleteTiquet (id) {
+  const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
+  const websqlPromise = websql(dataBase);
+  if (!dataBase) {
+    alert('Lo sentimos, algo fue mal en la conexion de la base de datos local');
+  } else {
+    return await new Promise((resolve, reject) => {
+      websqlPromise.transaction((tx) => {
+        tx.executeSql(('SELECT id, synchronized FROM tiquet WHERE id = ?'), [id]);
+      }).then((results) => {
+        let sql = '';
+        if (results[0].rows.length > 0 && results[0].rows[0].synchronized === 1) {
+          sql = 'UPDATE tiquet SET deleted = 1, synchronize = 1 WHERE id = ?';
+        } else {
+          sql = 'DELETE FROM tiquet WHERE id = ?';
+        }
+        websqlPromise.transaction((tx) => {
+          tx.executeSql((sql), [id]);
+        }).then(() => {
+          const response = { status: 200, data: { message: 'Tiquet eliminado con éxito' } };
+          resolve(response);
+        }).catch(() => {
+          const response = { status: 500, data: { message: 'Error al eliminar tiquet', errors: { sql: ['Se ha presentado un error de SQL'] } } };
+          reject(response);
+        });
+      }).catch(() => {
+        const response = { status: 500, data: { message: 'Error al eliminar tiquet', errors: { sql: ['Se ha presentado un error de SQL'] } } };
         reject(response);
       });
     });
@@ -424,6 +459,7 @@ export {
   getNotSynchronizedTiquets,
   getTiquet,
   getTiquets,
+  deleteTiquet,
   insertTiquet,
   getYards,
   getThirds,

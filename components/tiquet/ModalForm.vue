@@ -29,7 +29,6 @@
         <b-form-radio-group
           id="feedback-operation"
           v-model="operation"
-          :aria-describedby="ariaDescribedby"
           name="radio-operation"
           :disabled="disabledElements"
         >
@@ -47,6 +46,8 @@
           v-model="referral_number"
           type="text"
           :disabled="disabledElements"
+          v-mask="'XXXXXXXXXXXXXXXXXXXX'"
+          :formatter="upperFormatter"
         >
         </b-form-input>
         <b-form-invalid-feedback :state="stateReferral">
@@ -60,6 +61,8 @@
           v-model="receipt_number"
           type="text"
           :disabled="disabledElements"
+          v-mask="'XXXXXXXXXXXXXXXXXXXX'"
+          :formatter="upperFormatter"
         >
         </b-form-input>
         <b-form-invalid-feedback :state="stateReceipt">
@@ -479,7 +482,7 @@ export default {
         this.supplier = val.supplier;
         this.customer = val.customer;
         this.observation = val.observation;
-        this.round_trip = val.round_trip;
+        this.round_trip = val.round_trip === 1;
       }
     }
   },
