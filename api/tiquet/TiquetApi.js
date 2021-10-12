@@ -3,7 +3,7 @@
 // import AuthHeader from '@/helpers/common/AuthHelper';
 // const env = process.env.NODE_ENV;
 // const envConfig = environmentConfig[env];
-import { getTiquet, getTiquets, insertTiquet, getNotSynchronizedTiquets, deleteTiquet } from '@/helpers/synchronize';
+import { getTiquet, getTiquets, insertTiquet, getNotSynchronizedTiquets, deleteTiquet, updateTiquet } from '@/helpers/synchronize';
 
 // import AuthHeader from '@/helpers/common/AuthHelper';
 export default class TiquetApi {
@@ -27,7 +27,7 @@ export default class TiquetApi {
     return await deleteTiquet(id);
   }
 
-  /* async */ edit (data) {
-    return {};
+  async edit (data) {
+    return await updateTiquet(data);
   }
 }

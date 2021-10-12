@@ -115,7 +115,11 @@ export default {
     return {
       view: 'tiquet',
       fields: [
-        { key: 'receipt_number', label: 'Recibo', sortable: true, class: 'text-center' },
+        { key: 'type', label: 'Tipo', sortable: true, class: 'text-center' },
+        { key: 'referral_number', label: 'N° Remisión', sortable: true, class: 'text-center' },
+        { key: 'receipt_number', label: 'N° Recibo', sortable: true, class: 'text-center' },
+        { key: 'material', label: 'Material', sortable: true, class: 'text-center' },
+        { key: 'date', label: 'Fecha', sortable: true, class: 'text-center' },
         { key: 'actions', label: 'Acciones', class: 'text-center' }
       ],
       totalRows: 1,

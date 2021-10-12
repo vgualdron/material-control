@@ -401,8 +401,10 @@ export default {
       material: '',
       receipt_number: '',
       referral_number: '',
-      date: new Date().toISOString().slice(0, 10),
-      time: new Date().getHours() + ':' + new Date().getMinutes(),
+      date: (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(6, 10) +
+        '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(3, 5) +
+        '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(0, 2),
+      time: (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(11, 16),
       license_plate: '',
       trailer_number: '',
       driver: '',
@@ -478,7 +480,7 @@ export default {
         this.trailer_number = val.trailer_number;
         this.gross_weight = val.gross_weight;
         this.tare_weight = val.tare_weight;
-        this.seals = val.seals.length > 0 ? val.seals.split(',') : [];
+        this.seals = val.seals && val.seals.length > 0 ? val.seals.split(',') : [];
         this.supplier = val.supplier;
         this.customer = val.customer;
         this.observation = val.observation;
@@ -538,7 +540,7 @@ export default {
       return true;
     },
     stateReferral () {
-      if ((!this.referral_number || this.referral_number === '') && (this.type === 'R' || this.type === 'D' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P'))) {
+      if ((!this.referral_number || this.referral_number === '') && (this.type === 'R' || this.type === 'D' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P'))) {
         return false;
       }
       return true;
@@ -682,7 +684,7 @@ export default {
       if (this.typeAction === 'create') {
         await this.save({
           type: this.type,
-          operation: (this.type === 'OC' || this.type === 'OC') ? this.operation : '',
+          operation: (this.type === 'OC' || this.type === 'OP') ? this.operation : '',
           referral_number: this.referral_number,
           receipt_number: this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.receipt_number : '',
           date: this.date,
@@ -708,7 +710,28 @@ export default {
       if (this.typeAction === 'edit') {
         await this.edit({
           id: this.tiquet.id,
-          receipt_number: this.receipt_number
+          type: this.type,
+          operation: (this.type === 'OC' || this.type === 'OP') ? this.operation : '',
+          referral_number: this.referral_number,
+          receipt_number: this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.receipt_number : '',
+          date: this.date,
+          time: this.time,
+          material: this.material,
+          origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : '',
+          destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : '',
+          conveyor_company: this.conveyor_company,
+          driver: this.driver,
+          license_plate: this.license_plate,
+          trailer_number: this.trailer_number,
+          gross_weight: this.gross_weight,
+          tare_weight: this.tare_weight,
+          net_weight: this.net_weight,
+          supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : '',
+          customer: this.type === 'V' || this.type === 'OC' ? this.customer : '',
+          seals: this.seals.join(','),
+          observation: this.observation,
+          round_trip: this.round_trip && (this.type === 'D' || this.type === 'R') ? 1 : 0,
+          user: this.dataSession.userId
         });
       }
       if (this.typeAction === 'delete') {

@@ -48,7 +48,7 @@ const actions = {
       dispatch(`${types.actions.GET_TIQUETS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error, { root: true });
     }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });

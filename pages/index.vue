@@ -51,6 +51,7 @@ export default {
     ])
   },
   async mounted () {
+    await this.sync();
   },
   methods: {
     ...mapActions(typesSynchronize.PATH, {

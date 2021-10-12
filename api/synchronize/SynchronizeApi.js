@@ -22,8 +22,4 @@ export default class SynchronizeApi {
       }
     );
   }
-
-  async getYards (text) {
-    return await 111;
-  }
 }
