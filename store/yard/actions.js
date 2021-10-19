@@ -11,9 +11,7 @@ const actions = {
     }).catch((error) => {
       console.log(error);
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    })/* .finally((e) => {
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    }) */;
+    });
   },
   async [types.actions.SET_YARD] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
@@ -23,9 +21,7 @@ const actions = {
     }).catch((error) => {
       console.log(error);
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    })/* .finally((e) => {
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    }) */;
+    });
   },
   [types.actions.SET_SHOW_MODAL_FORM] ({ commit }, data) {
     commit(types.mutations.SET_SHOW_MODAL_FORM, data);
@@ -79,6 +75,21 @@ const actions = {
   async [types.actions.GET_LOCALE_DESTINY_YARDS] ({ commit, dispatch }, data) {
     await yardApi.getLocale(data).then((res) => {
       commit(types.mutations.SET_LOCALE_DESTINY_YARDS, res);
+    }).catch((error) => {
+      console.log(error);
+    });
+  },
+  async [types.actions.GET_ORIGIN_YARDS] ({ commit }, data) {
+    await yardApi.get(data).then((res) => {
+      console.log(res);
+      commit(types.mutations.SET_LOCALE_ORIGIN_YARDS, res.data);
+    }).catch((error) => {
+      console.log(error);
+    });
+  },
+  async [types.actions.GET_DESTINY_YARDS] ({ commit }, data) {
+    await yardApi.get(data).then((res) => {
+      commit(types.mutations.SET_LOCALE_DESTINY_YARDS, res.data);
     }).catch((error) => {
       console.log(error);
     });

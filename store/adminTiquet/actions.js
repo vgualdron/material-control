@@ -1,22 +1,23 @@
-import MaterialApi from '@/api/material/MaterialApi';
+import AdminTiquetApi from '@/api/adminTiquet/adminTiquetApi';
 import { typesCommon } from '@/store/common/typesCommon';
-import { typesMaterial as types } from './types';
-const materialApi = new MaterialApi();
+import { typesAdminTiquet as types } from './types';
+const adminTiquetApi = new AdminTiquetApi();
 const actions = {
-  async [types.actions.GET_MATERIALS] ({ commit, dispatch }, data) {
+  async [types.actions.GET_TIQUETS] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderState ?? true), { root: true });
-    await materialApi.get(data).then((res) => {
-      commit(types.mutations.SET_MATERIALS, res.data);
+    await adminTiquetApi.get(data).then((res) => {
+      commit(types.mutations.SET_TIQUETS, res.data);
     }).catch((error) => {
       console.log(error);
     }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },
-  async [types.actions.SET_MATERIAL] ({ commit, dispatch }, data) {
+  async [types.actions.SET_TIQUET] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await materialApi.getById(data.id).then((res) => {
-      commit(types.mutations.SET_MATERIAL, res.data);
+    await adminTiquetApi.getById(data.id).then((res) => {
+      console.log(res);
+      commit(types.mutations.SET_TIQUET, res.data);
     }).catch((error) => {
       console.log(error);
     }).finally((e) => {
@@ -31,9 +32,9 @@ const actions = {
   },
   async [types.actions.SAVE] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await materialApi.save(data).then((resp) => {
+    await adminTiquetApi.save(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_MATERIALS}`);
+      dispatch(`${types.actions.GET_TIQUETS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
@@ -43,9 +44,9 @@ const actions = {
   },
   async [types.actions.EDIT] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await materialApi.edit(data).then((resp) => {
+    await adminTiquetApi.edit(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_MATERIALS}`);
+      dispatch(`${types.actions.GET_TIQUETS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
@@ -55,21 +56,14 @@ const actions = {
   },
   async [types.actions.DELETE] ({ commit, dispatch }, id) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
-    await materialApi.delete(id).then((resp) => {
+    await adminTiquetApi.delete(id).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
-      dispatch(`${types.actions.GET_MATERIALS}`);
+      dispatch(`${types.actions.GET_TIQUETS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
     }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
-    });
-  },
-  async [types.actions.GET_LOCALE_MATERIALS] ({ commit, dispatch }, data) {
-    await materialApi.getLocale(data).then((res) => {
-      commit(types.mutations.SET_LOCALE_MATERIALS, res);
-    }).catch((error) => {
-      console.log(error);
     });
   }
 };

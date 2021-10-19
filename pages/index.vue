@@ -17,10 +17,7 @@
         <button @click="post">Hacer POST</button>
       </div>
       <div class="columns is-mobile mt-3">
-        <button @click="sync">SINCRONIZAR</button>
-      </div>
-      <div class="columns is-mobile mt-3">
-        <button @click="setDataToServer">ENVIAR TIQUETS</button>
+        <button @click="synchronize">SINCRONIZAR</button>
       </div>
       <div class="columns is-mobile mt-3">
         {{ JSON.stringify(token) }}
@@ -50,12 +47,12 @@ export default {
       'tiquets'
     ])
   },
-  async mounted () {
-    await this.sync();
+  mounted () {
+    this.synchronize();
   },
   methods: {
     ...mapActions(typesSynchronize.PATH, {
-      sync: typesSynchronize.actions.GET_DATA_FROM_SERVER,
+      getData: typesSynchronize.actions.GET_DATA_FROM_SERVER,
       setData: typesSynchronize.actions.SET_DATA_TO_SERVER
     }),
     ...mapActions(typesTiquet.PATH, {
@@ -86,9 +83,10 @@ export default {
         console.log(e);
       }
     },
-    async setDataToServer () {
+    async synchronize () {
       await this.getNotSynchronizedTiquets();
       await this.setData(this.tiquets);
+      await this.getData();
     }
   }
 };

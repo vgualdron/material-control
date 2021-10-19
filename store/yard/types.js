@@ -13,9 +13,10 @@ export const typesYard = {
   },
   actions: {
     GET_YARDS: '@actions/getYards',
-    GET_LOCALE_YARDS: '@actions/getLocaleYards',
     GET_LOCALE_ORIGIN_YARDS: '@actions/getLocaleOriginYards',
     GET_LOCALE_DESTINY_YARDS: '@actions/getLocaleDestinyYards',
+    GET_ORIGIN_YARDS: '@actions/getOriginYards',
+    GET_DESTINY_YARDS: '@actions/getDestinyYards',
     SET_YARD: '@actions/setYard',
     SET_SHOW_MODAL_FORM: '@actions/setShowModalForm',
     SET_TYPE_ACTION: '@actions/setTypeAction',

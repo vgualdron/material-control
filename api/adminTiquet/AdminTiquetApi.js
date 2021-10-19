@@ -1,14 +1,13 @@
 import axios from 'axios';
-import endpoints from '@/api/material/endpoints';
+import endpoints from '@/api/adminTiquet/endpoints';
 import environmentConfig from '@/config/env.config';
 import AuthHeader from '@/helpers/common/AuthHelper';
-import { getMaterials } from '@/helpers/synchronize';
 const env = process.env.NODE_ENV;
 const envConfig = environmentConfig[env];
-export default class MaterialApi {
+export default class AdminTiquetApi {
   async get (data) {
     return await axios.get(
-      `${envConfig.urlApi}/${endpoints.primary}/${data?.perPage ?? 10}/${data?.page ?? 1}/${encodeURIComponent(data?.text ? data.text : ' ')}/${data?.material ? data.material : 0}`,
+      `${envConfig.urlApi}/${endpoints.primary}/${data?.perPage ?? 10}/${data?.page ?? 1}/${encodeURIComponent(data?.text ? data.text : ' ')}`,
       {
         headers: AuthHeader()
       }
@@ -29,9 +28,5 @@ export default class MaterialApi {
 
   async edit (data) {
     return await axios.put(`${envConfig.urlApi}/${endpoints.primary}/${data.id}`, data, { headers: AuthHeader() });
-  }
-
-  async getLocale (data) {
-    return await getMaterials(data);
   }
 }

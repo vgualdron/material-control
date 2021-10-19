@@ -8,7 +8,7 @@ const envConfig = environmentConfig[env];
 export default class YardApi {
   async get (data) {
     return await axios.get(
-      `${envConfig.urlApi}/${endpoints.primary}/${data?.perPage ?? 10}/${data?.page ?? 1}/${encodeURIComponent(data?.text ? data.text : ' ')}/${encodeURIComponent(data?.yard ? data.yard : 0)}`,
+      `${envConfig.urlApi}/${endpoints.primary}/${data?.perPage ?? 10}/${data?.page ?? 1}/${encodeURIComponent(data?.text ? data.text : ' ')}/${encodeURIComponent(data?.yard ? data.yard : 0)}/${encodeURIComponent(data?.excludedYard ? data.excludedYard : 0)}`,
       {
         headers: AuthHeader()
       }

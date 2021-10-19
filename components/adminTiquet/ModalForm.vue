@@ -103,18 +103,18 @@
       <b-form-group class="mb-0">
         <label for="feedback-material" class="mt-3">Material</label>
         <v-select
-          v-if="localeMaterials && localeMaterials.data"
+          v-if="materials && materials.data"
           :filterable="false"
           id="feedback-material"
           required
           v-model="material"
-          :options="localeMaterials.data"
+          :options="materials.data"
           label="name"
           :reduce="data => data.id"
           :disabled="disabledElements"
-          @search="searchLocaleMaterials"
-          @close="searchLocaleMaterials"
-          @open="searchLocaleMaterials"
+          @search="searchMaterials"
+          @close="searchMaterials"
+          @open="searchMaterials"
         />
         <b-form-invalid-feedback :state="stateMaterial">
           {{ labelTextFieldRequired }}
@@ -163,7 +163,6 @@
         <label for="feedback-conveyor" class="mt-3">Empresa Transportadora</label>
         <v-select
           v-if="localeConveyorThirds && localeConveyorThirds.data"
-          :filterable="false"
           id="feedback-conveyor"
           :disabled="disabledElements"
           required
@@ -171,9 +170,6 @@
           :options="localeConveyorThirds.data"
           label="name"
           :reduce="data => data.id"
-          @search="searchLocaleConveyorThirds"
-          @close="searchLocaleConveyorThirds"
-          @open="searchLocaleConveyorThirds"
         />
         <b-form-invalid-feedback :state="stateConveyorCompany">
           {{ labelTextFieldRequired }}
@@ -283,7 +279,6 @@
         <label for="feedback-supplier" class="mt-3">Proveedor</label>
         <v-select
           v-if="localeSupplierThirds && localeSupplierThirds.data"
-          :filterable="false"
           id="feedback-supplier"
           :disabled="disabledElements"
           required
@@ -291,9 +286,6 @@
           :options="localeSupplierThirds.data"
           label="name"
           :reduce="data => data.id"
-          @search="searchLocaleSupplierThirds"
-          @close="searchLocaleSupplierThirds"
-          @open="searchLocaleSupplierThirds"
         />
         <b-form-invalid-feedback :state="stateSupplier">
           {{ labelTextFieldRequired }}
@@ -303,7 +295,6 @@
         <label for="feedback-customer" class="mt-3">Cliente</label>
         <v-select
           v-if="localeCustomerThirds && localeCustomerThirds.data"
-          :filterable="false"
           id="feedback-customer"
           :disabled="disabledElements"
           required
@@ -311,9 +302,6 @@
           :options="localeCustomerThirds.data"
           label="name"
           :reduce="data => data.id"
-          @search="searchLocaleCustomerThirds"
-          @close="searchLocaleCustomerThirds"
-          @open="searchLocaleCustomerThirds"
         />
         <b-form-invalid-feedback :state="stateCustomer">
           {{ labelTextFieldRequired }}
@@ -370,7 +358,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesTiquet as types } from '@/store/tiquet/types';
+import { typesAdminTiquet as types } from '@/store/adminTiquet/types';
 import { typesYard } from '@/store/yard/types';
 import { typesAuth } from '@/store/auth/types';
 import { typesMaterial } from '@/store/material/types';
@@ -440,7 +428,7 @@ export default {
         this.disabledElements = true;
       }
     },
-    tiquet (val) {
+    adminTiquet (val) {
       if (this.typeAction === 'create') {
         this.type = 'D';
         this.operation = 'P';
@@ -471,18 +459,18 @@ export default {
         this.receipt_number = val.receipt_number;
         this.date = val.date;
         this.time = val.time;
-        this.material = val.material;
-        this.origin_yard = val.origin_yard;
-        this.destiny_yard = val.destiny_yard;
-        this.conveyor_company = val.conveyor_company;
+        this.material = val.material ? parseInt(val.material) : null;
+        this.origin_yard = val.origin_yard ? parseInt(val.origin_yard) : null;
+        this.destiny_yard = val.destiny_yard ? parseInt(val.destiny_yard) : null;
+        this.conveyor_company = val.conveyor_company ? parseInt(val.conveyor_company) : null;
         this.driver = val.driver;
         this.license_plate = val.license_plate;
         this.trailer_number = val.trailer_number;
         this.gross_weight = val.gross_weight;
         this.tare_weight = val.tare_weight;
         this.seals = val.seals && val.seals.length > 0 ? val.seals.split(',') : [];
-        this.supplier = val.supplier;
-        this.customer = val.customer;
+        this.supplier = val.supplier ? parseInt(val.supplier) : null;
+        this.customer = val.customer ? parseInt(val.customer) : null;
         this.observation = val.observation;
         this.round_trip = val.round_trip === 1;
       }
@@ -494,7 +482,7 @@ export default {
   computed: {
     ...mapState(types.PATH, [
       'showModalForm',
-      'tiquet',
+      'adminTiquet',
       'typeAction'
     ]),
     ...mapState(typesYard.PATH, [
@@ -507,7 +495,7 @@ export default {
       'localeCustomerThirds'
     ]),
     ...mapState(typesMaterial.PATH, [
-      'localeMaterials'
+      'materials'
     ]),
     ...mapState(typesAuth.PATH, [
       'dataSession'
@@ -632,11 +620,11 @@ export default {
   },
   mounted () {
     this.searchOriginYards('');
+    this.searchMaterials('');
     this.searchDestinyYards('');
-    this.searchLocaleSupplierThirds('');
-    this.searchLocaleCustomerThirds('');
-    this.searchLocaleConveyorThirds('');
-    this.searchLocaleMaterials('');
+    this.searchCustomerThirds('');
+    this.searchConveyorThirds('');
+    this.searchSupplierThirds('');
   },
   methods: {
     ...mapActions(types.PATH, {
@@ -646,16 +634,16 @@ export default {
       edit: types.actions.EDIT
     }),
     ...mapActions(typesYard.PATH, {
-      getOriginYards: typesYard.actions.GET_LOCALE_ORIGIN_YARDS,
-      getDestinyYards: typesYard.actions.GET_LOCALE_DESTINY_YARDS
+      getOriginYards: typesYard.actions.GET_ORIGIN_YARDS,
+      getDestinyYards: typesYard.actions.GET_DESTINY_YARDS
     }),
     ...mapActions(typesThird.PATH, {
-      getLocaleSupplierThirds: typesThird.actions.GET_LOCALE_SUPPLIER_THIRDS,
-      getLocaleCustomerThirds: typesThird.actions.GET_LOCALE_CUSTOMER_THIRDS,
-      getLocaleConveyorThirds: typesThird.actions.GET_LOCALE_CONVEYOR_THIRDS
+      getSupplierThirds: typesThird.actions.GET_SUPPLIER_THIRDS,
+      getCustomerThirds: typesThird.actions.GET_CUSTOMER_THIRDS,
+      getConveyorThirds: typesThird.actions.GET_CONVEYOR_THIRDS
     }),
     ...mapActions(typesMaterial.PATH, {
-      getLocaleMaterials: typesMaterial.actions.GET_LOCALE_MATERIALS
+      getMaterials: typesMaterial.actions.GET_MATERIALS
     }),
     resetInfoModal () {
       this.type = 'D';
@@ -737,14 +725,14 @@ export default {
         });
       }
       if (this.typeAction === 'delete') {
-        await this.delete(this.tiquet.id);
+        await this.delete(this.adminTiquet.id);
       }
     },
     searchOriginYards (search) {
       const data = {
         text: search,
         yard: this.origin_yard,
-        excluded_yard: this.destiny_yard
+        excludedYard: this.destiny_yard
       };
       this.getOriginYards(data);
     },
@@ -752,46 +740,35 @@ export default {
       const data = {
         text: search,
         yard: this.destiny_yard,
-        excluded_yard: this.origin_yard
+        excludedYard: this.origin_yard
       };
       this.getDestinyYards(data);
     },
-    searchLocaleSupplierThirds (search) {
+    searchSupplierThirds (search) {
       const data = {
-        text: search,
-        third: this.supplier,
-        customer: 0,
-        associated: 1,
-        contractor: 0
+        type: 'ASOCIADO'
       };
-      this.getLocaleSupplierThirds(data);
+      this.getSupplierThirds(data);
     },
-    searchLocaleCustomerThirds (search) {
+    searchCustomerThirds (search) {
       const data = {
-        text: search,
-        third: this.customer,
-        customer: 1,
-        associated: 0,
-        contractor: 0
+        type: 'CLIENTE'
       };
-      this.getLocaleCustomerThirds(data);
+      this.getCustomerThirds(data);
     },
-    searchLocaleConveyorThirds (search) {
+    searchConveyorThirds (search) {
       const data = {
-        text: search,
-        third: this.conveyor_company,
-        customer: 0,
-        associated: 0,
-        contractor: 1
+        type: 'CONTRATISTA'
       };
-      this.getLocaleConveyorThirds(data);
+      this.getConveyorThirds(data);
     },
-    searchLocaleMaterials (search) {
+    searchMaterials (search) {
       const data = {
         text: search,
-        material: this.material
+        material: this.material,
+        loaderState: false
       };
-      this.getLocaleMaterials(data);
+      this.getMaterials(data);
     },
     upperFormatter (value) {
       return value.toUpperCase();
