@@ -7,7 +7,7 @@ const getters = {
     return state.authorizationToken;
   },
   [types.getters.IS_LOGGED_IN] (state) {
-    return state.authorizationToken !== null && state.authorizationToken !== undefined;
+    return state.authorizationToken !== null && state.authorizationToken !== undefined && state.authorizationToken.access_token;
   }
 };
 export default getters;
