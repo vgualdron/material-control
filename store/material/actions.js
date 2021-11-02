@@ -5,12 +5,15 @@ const materialApi = new MaterialApi();
 const actions = {
   async [types.actions.GET_MATERIALS] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderState ?? true), { root: true });
+    console.log(data?.loaderState ?? true);
     await materialApi.get(data).then((res) => {
       commit(types.mutations.SET_MATERIALS, res.data);
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderStateClose ?? false), { root: true });
+      console.log(data?.loaderStateClose ?? false);
     }).catch((error) => {
       console.log(error);
-    }).finally((e) => {
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderStateClose ?? false), { root: true });
+      console.log(data?.loaderStateClose ?? false);
     });
   },
   async [types.actions.SET_MATERIAL] ({ commit, dispatch }, data) {
@@ -37,7 +40,6 @@ const actions = {
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
-    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },

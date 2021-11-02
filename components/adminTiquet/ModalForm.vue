@@ -88,7 +88,6 @@
             <label for="feedback-time" class="mt-3">Hora</label>
             <b-form-timepicker
               id="feedback-time"
-              hour12
               v-model="time"
               placeholder="Hora"
               :disabled="disabledElements"
@@ -226,6 +225,8 @@
               min="0.0"
               type="number"
               :disabled="disabledElements"
+              step="0.01"
+              :formatter="formatDecimal"
             >
             </b-form-input>
             <b-form-invalid-feedback :state="stateGrossWeight">
@@ -239,6 +240,7 @@
               v-model="tare_weight"
               type="number"
               :disabled="disabledElements"
+              :formatter="formatDecimal"
             >
             </b-form-input>
             <b-form-invalid-feedback :state="stateTareWeight">
@@ -472,7 +474,7 @@ export default {
         this.supplier = val.supplier ? parseInt(val.supplier) : null;
         this.customer = val.customer ? parseInt(val.customer) : null;
         this.observation = val.observation;
-        this.round_trip = val.round_trip === 1;
+        this.round_trip = parseInt(val.round_trip) === 1;
       }
     }
   },
@@ -619,12 +621,6 @@ export default {
     }
   },
   mounted () {
-    this.searchOriginYards('');
-    this.searchMaterials('');
-    this.searchDestinyYards('');
-    this.searchCustomerThirds('');
-    this.searchConveyorThirds('');
-    this.searchSupplierThirds('');
   },
   methods: {
     ...mapActions(types.PATH, {
@@ -653,18 +649,18 @@ export default {
                     '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(3, 5) +
                     '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(0, 2);
       this.time = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(11, 16);
-      this.material = '';
+      this.material = null;
       this.origin_yard = '';
       this.destiny_yard = '';
-      this.conveyor_company = '';
+      this.conveyor_company = null;
       this.driver = '';
       this.license_plate = '';
       this.trailer_number = '';
       this.gross_weight = '';
       this.tare_weight = '';
       this.seals = [];
-      this.supplier = '';
-      this.customer = '';
+      this.supplier = null;
+      this.customer = null;
       this.observation = '';
       this.round_trip = false;
       this.setShowModalForm(false);
@@ -674,23 +670,26 @@ export default {
       if (this.typeAction === 'create') {
         await this.save({
           type: this.type,
-          operation: (this.type === 'OC' || this.type === 'OP') ? this.operation : '',
+          operation: (this.type === 'OC' || this.type === 'OP') ? this.operation : null,
           referral_number: this.referral_number,
-          receipt_number: this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.receipt_number : '',
+          receipt_number: this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.receipt_number : null,
           date: this.date,
           time: this.time,
           material: this.material,
-          origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : '',
-          destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : '',
+          origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
+          destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
+          conveyor_company_name: this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.name)[0],
           driver: this.driver,
           license_plate: this.license_plate,
           trailer_number: this.trailer_number,
           gross_weight: this.gross_weight,
           tare_weight: this.tare_weight,
           net_weight: this.net_weight,
-          supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : '',
-          customer: this.type === 'V' || this.type === 'OC' ? this.customer : '',
+          supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : null,
+          supplier_name: this.type === 'C' || this.type === 'OP' ? this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.name)[0] : null,
+          customer: this.type === 'V' || this.type === 'OC' ? this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0] : null,
+          customer_name: this.type === 'V' || this.type === 'OC' ? this.customer : null,
           seals: this.seals.join(','),
           observation: this.observation,
           round_trip: this.round_trip && (this.type === 'D' || this.type === 'R') ? 1 : 0,
@@ -699,29 +698,31 @@ export default {
       }
       if (this.typeAction === 'edit') {
         await this.edit({
-          id: this.tiquet.id,
+          id: this.adminTiquet.id,
           type: this.type,
-          operation: (this.type === 'OC' || this.type === 'OP') ? this.operation : '',
+          operation: (this.type === 'OC' || this.type === 'OP') ? this.operation : null,
           referral_number: this.referral_number,
-          receipt_number: this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.receipt_number : '',
+          receipt_number: this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.receipt_number : null,
           date: this.date,
           time: this.time,
           material: this.material,
-          origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : '',
-          destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : '',
+          origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
+          destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
+          conveyor_company_name: this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.name)[0],
           driver: this.driver,
           license_plate: this.license_plate,
           trailer_number: this.trailer_number,
           gross_weight: this.gross_weight,
           tare_weight: this.tare_weight,
           net_weight: this.net_weight,
-          supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : '',
-          customer: this.type === 'V' || this.type === 'OC' ? this.customer : '',
+          supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : null,
+          supplier_name: this.type === 'C' || this.type === 'OP' ? this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.name)[0] : null,
+          customer: this.type === 'V' || this.type === 'OC' ? this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0] : null,
+          customer_name: this.type === 'V' || this.type === 'OC' ? this.customer : null,
           seals: this.seals.join(','),
           observation: this.observation,
-          round_trip: this.round_trip && (this.type === 'D' || this.type === 'R') ? 1 : 0,
-          user: this.dataSession.userId
+          round_trip: this.round_trip && (this.type === 'D' || this.type === 'R') ? 1 : 0
         });
       }
       if (this.typeAction === 'delete') {
@@ -731,16 +732,16 @@ export default {
     searchOriginYards (search) {
       const data = {
         text: search,
-        yard: this.origin_yard,
-        excludedYard: this.destiny_yard
+        yard: parseInt(this.origin_yard),
+        excludedYard: parseInt(this.destiny_yard)
       };
       this.getOriginYards(data);
     },
     searchDestinyYards (search) {
       const data = {
         text: search,
-        yard: this.destiny_yard,
-        excludedYard: this.origin_yard
+        yard: parseInt(this.destiny_yard),
+        excludedYard: parseInt(this.origin_yard)
       };
       this.getDestinyYards(data);
     },
@@ -775,6 +776,9 @@ export default {
     },
     upperTags () {
       this.seals = this.seals.length > 0 ? this.seals.join(',').toUpperCase().split(',') : [];
+    },
+    formatDecimal (value) {
+      return value && value !== '' ? value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0] : '';
     }
   }
 };

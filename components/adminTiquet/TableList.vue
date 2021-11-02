@@ -102,6 +102,9 @@
 import { mapState, mapActions } from 'vuex';
 import { typesAdminTiquet as types } from '@/store/adminTiquet/types';
 import { typesCommon } from '@/store/common/typesCommon';
+import { typesYard } from '@/store/yard/types';
+import { typesMaterial } from '@/store/material/types';
+import { typesThird } from '@/store/third/types';
 import { BIconPencilFill, BIconTrashFill } from 'bootstrap-vue';
 import { inArray } from '@/helpers/common/array';
 
@@ -118,7 +121,7 @@ export default {
         { key: 'type', label: 'Tipo', sortable: true, class: 'text-center' },
         { key: 'referral_number', label: 'N° Remisión', sortable: true, class: 'text-center' },
         { key: 'receipt_number', label: 'N° Recibo', sortable: true, class: 'text-center' },
-        { key: 'material', label: 'Material', sortable: true, class: 'text-center' },
+        { key: 'material_name', label: 'Material', sortable: true, class: 'text-center' },
         { key: 'date', label: 'Fecha', sortable: true, class: 'text-center' },
         { key: 'actions', label: 'Acciones', class: 'text-center' }
       ],
@@ -176,12 +179,36 @@ export default {
       setShowModalForm: types.actions.SET_SHOW_MODAL_FORM,
       setTypeAction: types.actions.SET_TYPE_ACTION
     }),
-    showModal (item, action) {
+    ...mapActions(typesYard.PATH, {
+      getOriginYards: typesYard.actions.GET_ORIGIN_YARDS,
+      getDestinyYards: typesYard.actions.GET_DESTINY_YARDS
+    }),
+    ...mapActions(typesThird.PATH, {
+      getSupplierThirds: typesThird.actions.GET_SUPPLIER_THIRDS,
+      getCustomerThirds: typesThird.actions.GET_CUSTOMER_THIRDS,
+      getConveyorThirds: typesThird.actions.GET_CONVEYOR_THIRDS
+    }),
+    ...mapActions(typesMaterial.PATH, {
+      getMaterials: typesMaterial.actions.GET_MATERIALS
+    }),
+    async showModal (item, action) {
+      let material = null;
+      let destinyYard = null;
+      let originYard = null;
+      await this.setTypeAction(action);
       if (action !== 'create') {
-        this.setTiquet({ ...item });
+        await this.setTiquet({ ...item });
+        material = item.material;
+        destinyYard = item.destiny_yard;
+        originYard = item.origin_yard;
       }
-      this.setTypeAction(action);
-      this.setShowModalForm(true);
+      await this.searchMaterials(material);
+      await this.searchOriginYards(originYard);
+      await this.searchDestinyYards(destinyYard);
+      await this.searchConveyorThirds();
+      await this.searchSupplierThirds();
+      await this.searchCustomerThirds();
+      await this.setShowModalForm(true);
     },
     search () {
       const data = {
@@ -190,6 +217,49 @@ export default {
         text: this.filter
       };
       this.getTiquets(data);
+    },
+    searchOriginYards (id) {
+      const data = {
+        text: '',
+        yard: id,
+        excludedYard: null
+      };
+      this.getOriginYards(data);
+    },
+    async searchDestinyYards (id) {
+      const data = {
+        text: '',
+        yard: id,
+        excludedYard: null
+      };
+      await this.getDestinyYards(data);
+    },
+    async searchSupplierThirds () {
+      const data = {
+        type: 'ASOCIADO'
+      };
+      await this.getSupplierThirds(data);
+    },
+    async searchCustomerThirds () {
+      const data = {
+        type: 'CLIENTE'
+      };
+      await this.getCustomerThirds(data);
+    },
+    async searchConveyorThirds () {
+      const data = {
+        type: 'CONTRATISTA'
+      };
+      await this.getConveyorThirds(data);
+    },
+    async searchMaterials (id) {
+      const data = {
+        text: '',
+        material: id,
+        loaderState: true,
+        loaderStateClose: true
+      };
+      await this.getMaterials(data);
     }
   }
 };

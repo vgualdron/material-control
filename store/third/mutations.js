@@ -1,7 +1,6 @@
 import { typesThird as types } from './types';
 const mutations = {
   [types.mutations.SET_LOCALE_SUPPLIER_THIRDS] (state, payload) {
-    console.log(payload);
     state.localeSupplierThirds = payload;
   },
   [types.mutations.SET_LOCALE_CUSTOMER_THIRDS] (state, payload) {

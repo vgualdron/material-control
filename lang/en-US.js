@@ -7,5 +7,6 @@ export default {
   yard: 'yard',
   zone: 'zone',
   role: 'role ',
-  logout: 'logout'
+  logout: 'logout',
+  synchronize: 'synchronize'
 };

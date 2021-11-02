@@ -22,6 +22,7 @@
               :key="'nav-item' + index">
               {{ toCapitalCaseText($t(permision.name)) }}
             </b-nav-item>
+            <b-nav-item @click="synchronize">{{ toCapitalCaseText($t('synchronize')) }}</b-nav-item>
             <b-nav-item @click="close('/login')">{{ toCapitalCaseText($t('logout')) }}</b-nav-item>
           </b-nav>
         </nav>
@@ -35,6 +36,8 @@
 import { mapState, mapActions } from 'vuex';
 import { typesCommon } from '@/store/common/typesCommon';
 import { typesAuth } from '@/store/auth/types';
+import { typesSynchronize } from '@/store/synchronize/types';
+import { typesTiquet } from '@/store/tiquet/types';
 import BannerMenu from '@/components/common/BannerMenu.vue';
 import { toCapitalCase } from '@/helpers/common/string';
 export default {
@@ -65,6 +68,13 @@ export default {
       setAuthorizationToken: typesAuth.actions.SET_AUTHORIZATION_TOKEN,
       logout: typesAuth.actions.LOGOUT
     }),
+    ...mapActions(typesSynchronize.PATH, {
+      getData: typesSynchronize.actions.GET_DATA_FROM_SERVER,
+      setData: typesSynchronize.actions.SET_DATA_TO_SERVER
+    }),
+    ...mapActions(typesTiquet.PATH, {
+      getNotSynchronizedTiquets: typesTiquet.actions.GET_NOT_SYNCHRONIZED_TIQUETS
+    }),
     go (router) {
       this.setRouterActive(router);
     },
@@ -74,6 +84,11 @@ export default {
     },
     toCapitalCaseText (text) {
       return toCapitalCase(text);
+    },
+    async synchronize () {
+      await this.getNotSynchronizedTiquets();
+      await this.setData(this.tiquets);
+      await this.getData();
     }
   }
 };

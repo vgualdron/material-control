@@ -7,5 +7,6 @@ export default {
   yard: 'patio',
   zone: 'zona',
   role: 'rol',
-  logout: 'cerrar sesión'
+  logout: 'cerrar sesión',
+  synchronize: 'sincronizar'
 };

@@ -7,25 +7,23 @@ const actions = {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderState ?? true), { root: true });
     await adminTiquetApi.get(data).then((res) => {
       commit(types.mutations.SET_TIQUETS, res.data);
-    }).catch((error) => {
-      console.log(error);
-    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
+    }).catch((error) => {
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
+      console.log(error);
     });
   },
   async [types.actions.SET_TIQUET] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
     await adminTiquetApi.getById(data.id).then((res) => {
-      console.log(res);
       commit(types.mutations.SET_TIQUET, res.data);
     }).catch((error) => {
       console.log(error);
-    }).finally((e) => {
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },
-  [types.actions.SET_SHOW_MODAL_FORM] ({ commit }, data) {
+  [types.actions.SET_SHOW_MODAL_FORM] ({ commit, dispatch }, data) {
     commit(types.mutations.SET_SHOW_MODAL_FORM, data);
+    dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
   },
   [types.actions.SET_TYPE_ACTION] ({ commit }, data) {
     commit(types.mutations.SET_TYPE_ACTION, data);

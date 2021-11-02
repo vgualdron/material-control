@@ -4,13 +4,13 @@ import { typesYard as types } from './types';
 const yardApi = new YardApi();
 const actions = {
   async [types.actions.GET_YARDS] ({ commit, dispatch }, data) {
-    dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
+    dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderState ?? true), { root: true });
     await yardApi.get(data).then((res) => {
       commit(types.mutations.SET_YARDS, res.data);
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderStateClose ?? false), { root: true });
     }).catch((error) => {
       console.log(error);
-      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderStateClose ?? false), { root: true });
     });
   },
   async [types.actions.SET_YARD] ({ commit, dispatch }, data) {
@@ -81,7 +81,6 @@ const actions = {
   },
   async [types.actions.GET_ORIGIN_YARDS] ({ commit }, data) {
     await yardApi.get(data).then((res) => {
-      console.log(res);
       commit(types.mutations.SET_LOCALE_ORIGIN_YARDS, res.data);
     }).catch((error) => {
       console.log(error);

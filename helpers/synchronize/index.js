@@ -309,7 +309,6 @@ async function getNotSynchronizedTiquets () {
                       'WHERE t.synchronize = ? ' +
                       'ORDER BY t.deleted DESC', [1]);
       }).then((results) => {
-        console.log('OK');
         const result = [];
         for (let i = 0; i < results[0].rows.length; i++) {
           result.push(results[0].rows[i]);
@@ -317,7 +316,6 @@ async function getNotSynchronizedTiquets () {
         console.log(results);
         resolve(result);
       }).catch(() => {
-        console.log('ERROR');
         const response = { status: 500, data: { message: 'Error al obtener tiquets', errors: { sql: ['Se ha presentado un error de SQL'] } } };
         reject(response);
       });
