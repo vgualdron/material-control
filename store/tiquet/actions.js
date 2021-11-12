@@ -17,9 +17,9 @@ const actions = {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
     await tiquetApi.getById(data.id).then((res) => {
       commit(types.mutations.SET_TIQUET, res.data);
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     }).catch((error) => {
       console.log(error);
-    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },
@@ -34,10 +34,11 @@ const actions = {
     await tiquetApi.save(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
       dispatch(`${types.actions.GET_TIQUETS}`);
+      commit(types.mutations.SET_TYPE_ACTION, '');
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error, { root: true });
-    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },
@@ -46,10 +47,11 @@ const actions = {
     await tiquetApi.edit(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
       dispatch(`${types.actions.GET_TIQUETS}`);
+      commit(types.mutations.SET_TYPE_ACTION, '');
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error, { root: true });
-    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },

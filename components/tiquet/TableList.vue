@@ -15,6 +15,7 @@
           ></b-form-input>
           <b-input-group-append>
             <b-button :disabled="!filter" @click="filter = ''">Limpiar</b-button>
+            <b-button class="ml-3" @click="synchronize()">Sincronizar</b-button>
             <b-button v-if="showInsert" class="ml-3" @click="showModal(null, 'create')">Nuevo</b-button>
           </b-input-group-append>
         </b-input-group>
@@ -101,6 +102,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import { typesTiquet as types } from '@/store/tiquet/types';
+import { typesSynchronize } from '@/store/synchronize/types';
 import { typesCommon } from '@/store/common/typesCommon';
 import { BIconPencilFill, BIconTrashFill } from 'bootstrap-vue';
 import { inArray } from '@/helpers/common/array';
@@ -118,7 +120,7 @@ export default {
         { key: 'type', label: 'Tipo', sortable: true, class: 'text-center' },
         { key: 'referral_number', label: 'N° Remisión', sortable: true, class: 'text-center' },
         { key: 'receipt_number', label: 'N° Recibo', sortable: true, class: 'text-center' },
-        { key: 'material', label: 'Material', sortable: true, class: 'text-center' },
+        { key: 'material_name', label: 'Material', sortable: true, class: 'text-center' },
         { key: 'date', label: 'Fecha', sortable: true, class: 'text-center' },
         { key: 'actions', label: 'Acciones', class: 'text-center' }
       ],
@@ -174,7 +176,12 @@ export default {
       getTiquets: types.actions.GET_TIQUETS,
       setTiquet: types.actions.SET_TIQUET,
       setShowModalForm: types.actions.SET_SHOW_MODAL_FORM,
-      setTypeAction: types.actions.SET_TYPE_ACTION
+      setTypeAction: types.actions.SET_TYPE_ACTION,
+      getNotSynchronizedTiquets: types.actions.GET_NOT_SYNCHRONIZED_TIQUETS
+    }),
+    ...mapActions(typesSynchronize.PATH, {
+      getData: typesSynchronize.actions.GET_DATA_FROM_SERVER,
+      setData: typesSynchronize.actions.SET_DATA_TO_SERVER
     }),
     showModal (item, action) {
       if (action !== 'create') {
@@ -190,6 +197,12 @@ export default {
         text: this.filter
       };
       this.getTiquets(data);
+    },
+    async synchronize () {
+      await this.getNotSynchronizedTiquets();
+      await this.setData(this.tiquets);
+      await this.getData();
+      await this.getTiquets();
     }
   }
 };

@@ -15,6 +15,7 @@
           ></b-form-input>
           <b-input-group-append>
             <b-button :disabled="!filter" @click="filter = ''">Limpiar</b-button>
+            <b-button class="ml-3" @click="synchronize()">Sincronizar</b-button>
             <b-button v-if="showInsert" class="ml-3" @click="showModal(null, 'create')">Nuevo</b-button>
           </b-input-group-append>
         </b-input-group>
@@ -101,7 +102,9 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import { typesAdminTiquet as types } from '@/store/adminTiquet/types';
+import { typesTiquet } from '@/store/tiquet/types';
 import { typesCommon } from '@/store/common/typesCommon';
+import { typesSynchronize } from '@/store/synchronize/types';
 import { typesYard } from '@/store/yard/types';
 import { typesMaterial } from '@/store/material/types';
 import { typesThird } from '@/store/third/types';
@@ -142,6 +145,9 @@ export default {
     ...mapState(types.PATH, [
       'adminTiquets',
       'adminTiquet'
+    ]),
+    ...mapState(typesTiquet.PATH, [
+      'tiquets'
     ]),
     items () {
       return this.adminTiquets.data.map((item) => {
@@ -190,6 +196,13 @@ export default {
     }),
     ...mapActions(typesMaterial.PATH, {
       getMaterials: typesMaterial.actions.GET_MATERIALS
+    }),
+    ...mapActions(typesSynchronize.PATH, {
+      getData: typesSynchronize.actions.GET_DATA_FROM_SERVER,
+      setData: typesSynchronize.actions.SET_DATA_TO_SERVER
+    }),
+    ...mapActions(typesTiquet.PATH, {
+      getNotSynchronizedTiquets: typesTiquet.actions.GET_NOT_SYNCHRONIZED_TIQUETS
     }),
     async showModal (item, action) {
       let material = null;
@@ -260,6 +273,12 @@ export default {
         loaderStateClose: true
       };
       await this.getMaterials(data);
+    },
+    async synchronize () {
+      await this.getNotSynchronizedTiquets();
+      await this.setData(this.tiquets);
+      await this.getData();
+      // await this.getTiquets();
     }
   }
 };

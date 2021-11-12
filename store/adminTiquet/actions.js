@@ -33,10 +33,11 @@ const actions = {
     await adminTiquetApi.save(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
       dispatch(`${types.actions.GET_TIQUETS}`);
+      commit(types.mutations.SET_TYPE_ACTION, '');
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
-    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },
@@ -45,10 +46,11 @@ const actions = {
     await adminTiquetApi.edit(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
       dispatch(`${types.actions.GET_TIQUETS}`);
+      commit(types.mutations.SET_TYPE_ACTION, '');
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
-    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   },
@@ -58,9 +60,9 @@ const actions = {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });
       dispatch(`${types.actions.GET_TIQUETS}`);
       commit(types.mutations.SET_SHOW_MODAL_FORM, false);
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     }).catch((error) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error.response, { root: true });
-    }).finally((e) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   }

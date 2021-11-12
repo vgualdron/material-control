@@ -52,6 +52,9 @@ export default {
     ...mapState(typesCommon.PATH, [
       'routerActive',
       'userPermisions'
+    ]),
+    ...mapState(typesTiquet.PATH, [
+      'tiquets'
     ])
   },
   mounted () {
@@ -73,6 +76,7 @@ export default {
       setData: typesSynchronize.actions.SET_DATA_TO_SERVER
     }),
     ...mapActions(typesTiquet.PATH, {
+      getTiquets: typesTiquet.actions.GET_TIQUETS,
       getNotSynchronizedTiquets: typesTiquet.actions.GET_NOT_SYNCHRONIZED_TIQUETS
     }),
     go (router) {
@@ -89,6 +93,7 @@ export default {
       await this.getNotSynchronizedTiquets();
       await this.setData(this.tiquets);
       await this.getData();
+      await this.getTiquets();
     }
   }
 };

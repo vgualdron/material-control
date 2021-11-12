@@ -2,17 +2,18 @@
   <b-modal
     v-model="showModalForm"
     :id="id"
+    size="lg"
     no-close-on-backdrop
     no-close-on-esc
-    @hide="resetInfoModal">
+    >
     <template #modal-header>
       <h5>{{ title }}</h5>
-      <b-icon-x @click="resetInfoModal()" class="icon-close" font-scale="2"></b-icon-x>
+      <b-icon-x @click="closeModal()" class="icon-close" font-scale="2"></b-icon-x>
     </template>
     <b-form
       @submit="handleForm">
-      <b-form-group>
-        <label for="feedback-type" class="mb-3">Tipo</label>
+      <b-form-group class="mb-1">
+        <label for="feedback-type">Tipo</label>
         <b-form-select
           id="feedback-type"
           v-model="type"
@@ -24,7 +25,7 @@
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group v-if="type=='OC' || type=='OP'">
+      <b-form-group v-if="type=='OC' || type=='OP'" class="mb-1">
         <label for="feedback-operation">Tipo de operación</label>
         <b-form-radio-group
           id="feedback-operation"
@@ -39,40 +40,10 @@
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group class="mb-0">
-        <label for="feedback-referral-number">Número de Remisión</label>
-        <b-form-input
-          id="feedback-referral-number"
-          v-model="referral_number"
-          type="text"
-          :disabled="disabledElements"
-          v-mask="'XXXXXXXXXXXXXXXXXXXX'"
-          :formatter="upperFormatter"
-        >
-        </b-form-input>
-        <b-form-invalid-feedback :state="stateReferral">
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group class="mb-0 mt-3" v-if="type=='C' || type=='R' || ((type=='OC' || type=='OP') && operation=='D')">
-        <label for="feedback-receipt">Número de Recibo</label>
-        <b-form-input
-          id="feedback-receipt"
-          v-model="receipt_number"
-          type="text"
-          :disabled="disabledElements"
-          v-mask="'XXXXXXXXXXXXXXXXXXXX'"
-          :formatter="upperFormatter"
-        >
-        </b-form-input>
-        <b-form-invalid-feedback :state="stateReceipt">
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group class="mb-0">
+      <b-form-group class="mb-1">
         <b-form-row>
           <b-col md="8">
-            <label for="feedback-date" class="mt-3">Fecha</label>
+            <label for="feedback-date">Fecha</label>
             <b-form-datepicker
               id="feedback-date"
               v-model="date"
@@ -85,7 +56,7 @@
             </b-form-invalid-feedback>
           </b-col>
           <b-col md="4">
-            <label for="feedback-time" class="mt-3">Hora</label>
+            <label for="feedback-time">Hora</label>
             <b-form-timepicker
               id="feedback-time"
               v-model="time"
@@ -99,67 +70,148 @@
           </b-col>
         </b-form-row>
       </b-form-group>
-      <b-form-group class="mb-0">
-        <label for="feedback-material" class="mt-3">Material</label>
+      <b-form-group class="mb-1">
+        <b-form-row>
+          <b-col md="6">
+            <label for="feedback-license-plate">Placa Vehículo</label>
+            <b-form-input
+              id="feedback-license-plate"
+              v-model="license_plate"
+              v-mask="'XXXXXX'"
+              :formatter="upperFormatter"
+              type="text"
+              :disabled="disabledElements"
+            >
+            </b-form-input>
+            <b-form-invalid-feedback :state="statePlate">
+              {{ labelTextFieldRequired }}
+            </b-form-invalid-feedback>
+          </b-col>
+          <b-col md="6">
+            <label for="feedback-trailer-number">Número de Trailer</label>
+            <b-form-input
+              id="feedback-trailer-number"
+              v-model="trailer_number"
+              v-mask="'XXXXXXXX'"
+              :formatter="upperFormatter"
+              type="text"
+              :disabled="disabledElements"
+            >
+            </b-form-input>
+          </b-col>
+        </b-form-row>
+      </b-form-group>
+      <b-form-group class="mb-1">
+        <b-form-row>
+          <b-col :md="showReceiptNumber ? 6 : 12">
+            <label for="feedback-referral-number">Número de Remisión</label>
+            <b-form-input
+              id="feedback-referral-number"
+              v-model="referral_number"
+              type="text"
+              :disabled="disabledElements"
+              v-mask="'XXXXXXXXXXXXXXXXXXXX'"
+              :formatter="upperFormatter"
+            >
+            </b-form-input>
+            <b-form-invalid-feedback :state="stateReferral">
+              {{ labelTextFieldRequired }}
+            </b-form-invalid-feedback>
+          </b-col>
+          <b-col md="6" v-if="type=='C' || type=='R' || ((type=='OC' || type=='OP') && operation=='D')">
+            <label for="feedback-receipt">Número de Recibo</label>
+            <b-form-input
+              id="feedback-receipt"
+              v-model="receipt_number"
+              type="text"
+              :disabled="disabledElements"
+              v-mask="'XXXXXXXXXXXXXXXXXXXX'"
+              :formatter="upperFormatter"
+            >
+            </b-form-input>
+            <b-form-invalid-feedback :state="stateReceipt">
+              {{ labelTextFieldRequired }}
+            </b-form-invalid-feedback>
+          </b-col>
+        </b-form-row>
+      </b-form-group>
+      <b-form-group class="mb-1">
+        <b-form-row>
+          <b-col :md="renderDestinyYard ? 6 : 12"  v-if="renderOriginYard">
+            <label for="feedback-origin-yard">Patio Despacho</label>
+            <v-select
+              v-if="originYards && originYards.data"
+              :filterable="false"
+              id="feedback-origin-yard"
+              :disabled="disabledElements"
+              v-model="origin_yard"
+              :options="originYards.data"
+              label="name"
+              :reduce="data => data.id"
+              @search="searchOriginYards"
+              @close="searchOriginYards"
+              @open="searchOriginYards"
+            />
+            <b-form-invalid-feedback :state="stateOriginYard">
+              {{ labelTextFieldRequired }}
+            </b-form-invalid-feedback>
+          </b-col>
+          <b-col :md="renderOriginYard ? 6 : 12" v-if="renderDestinyYard">
+            <label for="feedback-destiny-yard">Patio Recepción</label>
+            <v-select
+              v-if="destinyYards && destinyYards.data"
+              :filterable="false"
+              id="feedback-destiny-yard"
+              :disabled="disabledElements"
+              required
+              v-model="destiny_yard"
+              :options="destinyYards.data"
+              label="name"
+              :reduce="data => data.id"
+              @search="searchDestinyYards"
+              @close="searchDestinyYards"
+              @open="searchDestinyYards"
+            />
+            <b-form-invalid-feedback :state="stateDestinyYard">
+              {{ labelTextFieldRequired }}
+            </b-form-invalid-feedback>
+          </b-col>
+        </b-form-row>
+      </b-form-group>
+      <b-form-group v-if="type=='C' || type=='OP'" class="mb-1">
+        <label for="feedback-supplier">Proveedor</label>
         <v-select
-          v-if="materials && materials.data"
-          :filterable="false"
-          id="feedback-material"
+          v-if="localeSupplierThirds && localeSupplierThirds.data"
+          id="feedback-supplier"
+          :disabled="disabledElements"
           required
-          v-model="material"
-          :options="materials.data"
+          v-model="supplier"
+          :options="localeSupplierThirds.data"
           label="name"
           :reduce="data => data.id"
-          :disabled="disabledElements"
-          @search="searchMaterials"
-          @close="searchMaterials"
-          @open="searchMaterials"
         />
-        <b-form-invalid-feedback :state="stateMaterial">
+        <b-form-invalid-feedback :state="stateSupplier">
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group v-if="renderOriginYard" class="mb-0">
-        <label for="feedback-origin-yard" class="mt-3">Patio Despacho</label>
+      <b-form-group v-if="type=='V' || type=='OC'" class="mb-1">
+        <label for="feedback-customer">Cliente</label>
         <v-select
-          v-if="originYards && originYards.data"
-          :filterable="false"
-          id="feedback-origin-yard"
-          :disabled="disabledElements"
-          v-model="origin_yard"
-          :options="originYards.data"
-          label="name"
-          :reduce="data => data.id"
-          @search="searchOriginYards"
-          @close="searchOriginYards"
-          @open="searchOriginYards"
-        />
-        <b-form-invalid-feedback :state="stateOriginYard">
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group v-if="renderDestinyYard" class="mb-0">
-        <label for="feedback-destiny-yard" class="mt-3">Patio Recepción</label>
-        <v-select
-          v-if="destinyYards && destinyYards.data"
-          :filterable="false"
-          id="feedback-destiny-yard"
+          v-if="localeCustomerThirds && localeCustomerThirds.data"
+          id="feedback-customer"
           :disabled="disabledElements"
           required
-          v-model="destiny_yard"
-          :options="destinyYards.data"
+          v-model="customer"
+          :options="localeCustomerThirds.data"
           label="name"
           :reduce="data => data.id"
-          @search="searchDestinyYards"
-          @close="searchDestinyYards"
-          @open="searchDestinyYards"
         />
-        <b-form-invalid-feedback :state="stateDestinyYard">
+        <b-form-invalid-feedback :state="stateCustomer">
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group class="mb-0">
-        <label for="feedback-conveyor" class="mt-3">Empresa Transportadora</label>
+      <b-form-group class="mb-1">
+        <label for="feedback-conveyor">Empresa Transportadora</label>
         <v-select
           v-if="localeConveyorThirds && localeConveyorThirds.data"
           id="feedback-conveyor"
@@ -174,50 +226,79 @@
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group class="mb-0">
-        <label for="feedback-driver" class="mt-3">Conductor</label>
-        <b-form-input
-          id="feedback-driver"
-          v-model="driver"
-          :formatter="upperFormatter"
-          type="text"
-          :disabled="disabledElements"
-        >
-        </b-form-input>
-        <b-form-invalid-feedback :state="stateDriver">
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group class="mb-0">
-        <label for="feedback-license-plate" class="mt-3">Placa Vehículo</label>
-        <b-form-input
-          id="feedback-license-plate"
-          v-model="license_plate"
-          v-mask="'XXXXXX'"
-          :formatter="upperFormatter"
-          type="text"
-          :disabled="disabledElements"
-        >
-        </b-form-input>
-        <b-form-invalid-feedback :state="statePlate">
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group class="mb-0">
-        <label for="feedback-trailer-number" class="mt-3">Número de Trailer</label>
-        <b-form-input
-          id="feedback-trailer-number"
-          v-model="trailer_number"
-          v-mask="'XXXXXXXX'"
-          :formatter="upperFormatter"
-          type="text"
-          :disabled="disabledElements"
-        >
-        </b-form-input>
-      </b-form-group>
-      <b-form-group>
+      <b-form-group class="mb-1">
         <b-form-row>
-          <b-col md="4" class="mt-3">
+          <b-col md="6">
+            <label for="feedback-driver-name">Nombre Conductor</label>
+            <b-form-input
+              id="feedback-driver-name"
+              v-model="driver_name"
+              :formatter="upperFormatter"
+              type="text"
+              :disabled="disabledElements"
+            >
+            </b-form-input>
+            <b-form-invalid-feedback :state="stateDriverName">
+              {{ labelTextFieldRequired }}
+            </b-form-invalid-feedback>
+          </b-col>
+          <b-col md="6">
+            <label for="feedback-driver-document">Documento Conductor</label>
+            <b-form-input
+              id="feedback-driver-document"
+              v-model="driver_document"
+              :formatter="upperFormatter"
+              type="text"
+              :disabled="disabledElements"
+            >
+            </b-form-input>
+            <b-form-invalid-feedback :state="stateDriverDocument">
+              {{ labelTextFieldRequired }}
+            </b-form-invalid-feedback>
+          </b-col>
+        </b-form-row>
+      </b-form-group>
+      <b-form-group class="mb-1">
+        <b-form-row>
+          <b-col md="8">
+            <label for="feedback-material">Material</label>
+            <v-select
+              v-if="materials && materials.data"
+              :filterable="false"
+              id="feedback-material"
+              size="lg"
+              required
+              v-model="material"
+              :options="materials.data"
+              label="name"
+              :reduce="data => data.id"
+              :disabled="disabledElements"
+              @search="searchMaterials"
+              @close="searchMaterials"
+              @open="searchMaterials"
+            />
+            <b-form-invalid-feedback :state="stateMaterial">
+              {{ labelTextFieldRequired }}
+            </b-form-invalid-feedback>
+          </b-col>
+          <b-col md="4">
+            <label for="feedback-ash-percentage">Porcentaje Cenizas</label>
+            <b-form-input
+              id="feedback-ash-percentage"
+              v-model="ash_percentage"
+              min="0.0"
+              type="number"
+              :disabled="disabledElements"
+              step="0.01"
+              :formatter="formatDecimal"
+            >
+            </b-form-input>
+          </b-col>
+        </b-form-row>
+      </b-form-group>
+      <b-form-group class="mb-1">
+        <b-form-row>
+          <b-col md="4">
             <label for="feedback-gross-weight">Peso Bruto</label>
             <b-form-input
               id="feedback-gross-weight"
@@ -233,7 +314,7 @@
               {{ labelTextFieldRequired }}
             </b-form-invalid-feedback>
           </b-col>
-          <b-col md="4" class="mt-3">
+          <b-col md="4">
             <label for="feedback-tare-weight">Peso Tara</label>
             <b-form-input
               id="feedback-tare-weight"
@@ -247,7 +328,7 @@
               {{ labelTextFieldRequired }}
             </b-form-invalid-feedback>
           </b-col>
-          <b-col md="4" class="mt-3">
+          <b-col md="4">
             <label for="feedback-net-weight">Peso Neto</label>
             <b-form-input
               id="feedback-net-weight"
@@ -262,7 +343,7 @@
           </b-col>
         </b-form-row>
       </b-form-group>
-      <b-form-group class="mb-0 mt-3">
+      <b-form-group class="mb-1">
         <label for="feedback-seals">Precintos</label>
         <b-form-tags
           input-id="feedback-seals"
@@ -277,40 +358,8 @@
           :disabled="disabledElements"
         ></b-form-tags>
       </b-form-group>
-      <b-form-group v-if="type=='C' || type=='OP'" class="mb-0">
-        <label for="feedback-supplier" class="mt-3">Proveedor</label>
-        <v-select
-          v-if="localeSupplierThirds && localeSupplierThirds.data"
-          id="feedback-supplier"
-          :disabled="disabledElements"
-          required
-          v-model="supplier"
-          :options="localeSupplierThirds.data"
-          label="name"
-          :reduce="data => data.id"
-        />
-        <b-form-invalid-feedback :state="stateSupplier">
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
-      </b-form-group>
-      <b-form-group v-if="type=='V' || type=='OC'" class="mb-0">
-        <label for="feedback-customer" class="mt-3">Cliente</label>
-        <v-select
-          v-if="localeCustomerThirds && localeCustomerThirds.data"
-          id="feedback-customer"
-          :disabled="disabledElements"
-          required
-          v-model="customer"
-          :options="localeCustomerThirds.data"
-          label="name"
-          :reduce="data => data.id"
-        />
-        <b-form-invalid-feedback :state="stateCustomer">
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
-      </b-form-group>
       <b-form-group>
-        <label for="feedbackobservation" class="mt-3">Observaciones</label>
+        <label for="feedbackobservation">Observaciones</label>
         <b-form-textarea
           id="feedbackobservation"
           v-model="observation"
@@ -350,7 +399,8 @@
           variant="secondary"
           size="sm"
           class="float-right"
-          @click="resetInfoModal()">
+          @click="closeModal()"
+        >
           Cancelar
         </b-button>
       </div>
@@ -369,6 +419,12 @@ import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
   data () {
+    const stringFullDate = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '');
+    const arrayFullDate = stringFullDate.split(' ');
+    let arrayDate = arrayFullDate[0].split('/');
+    let arrayTime = arrayFullDate[1].split(':');
+    arrayDate = arrayDate.map(function (x) { return x.padStart(2, '0'); });
+    arrayTime = arrayTime.map(function (x) { return x.padStart(2, '0'); });
     return {
       id: 'tiquet-modal',
       title: 'Crear tiquet',
@@ -389,15 +445,15 @@ export default {
       supplier: '',
       customer: '',
       material: '',
+      ash_percentage: 0,
       receipt_number: '',
       referral_number: '',
-      date: (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(6, 10) +
-        '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(3, 5) +
-        '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(0, 2),
-      time: (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(11, 16),
+      date: arrayDate[2] + '-' + arrayDate[1] + '-' + arrayDate[0],
+      time: arrayTime[0] + ':' + arrayTime[1],
       license_plate: '',
       trailer_number: '',
-      driver: '',
+      driver_document: '',
+      driver_name: '',
       gross_weight: '',
       tare_weight: '',
       conveyor_company: '',
@@ -412,6 +468,7 @@ export default {
   watch: {
     typeAction (val) {
       if (val === 'create') {
+        this.resetInfoModal();
         this.title = 'Crear Tiquet';
         this.id = 'create-tiquet-modal';
         this.textBtnSubmit = 'Registrar';
@@ -431,29 +488,6 @@ export default {
       }
     },
     adminTiquet (val) {
-      if (this.typeAction === 'create') {
-        this.type = 'D';
-        this.operation = 'P';
-        this.referral_number = '';
-        this.date = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(6, 10) +
-                    '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(3, 5) +
-                    '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(0, 2);
-        this.time = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(11, 16);
-        this.material = '';
-        this.origin_yard = '';
-        this.destiny_yard = '';
-        this.conveyor_company = '';
-        this.driver = '';
-        this.license_plate = '';
-        this.trailer_number = '';
-        this.gross_weight = '';
-        this.tare_weight = '';
-        this.seals = [];
-        this.supplier = '';
-        this.customer = '';
-        this.observation = '';
-        this.round_trip = false;
-      }
       if (this.typeAction === 'edit' || this.typeAction === 'delete') {
         this.type = val.type;
         this.operation = val.operation;
@@ -462,10 +496,12 @@ export default {
         this.date = val.date;
         this.time = val.time;
         this.material = val.material ? parseInt(val.material) : null;
+        this.ash_percentage = val.ash_percentage;
         this.origin_yard = val.origin_yard ? parseInt(val.origin_yard) : null;
         this.destiny_yard = val.destiny_yard ? parseInt(val.destiny_yard) : null;
         this.conveyor_company = val.conveyor_company ? parseInt(val.conveyor_company) : null;
-        this.driver = val.driver;
+        this.driver_document = val.driver_document;
+        this.driver_name = val.driver_name;
         this.license_plate = val.license_plate;
         this.trailer_number = val.trailer_number;
         this.gross_weight = val.gross_weight;
@@ -503,7 +539,10 @@ export default {
       'dataSession'
     ]),
     net_weight () {
-      return ((this.gross_weight - this.tare_weight).toFixed(2));
+      return (((this.gross_weight ?? 0) - (this.tare_weight ?? 0)).toFixed(2));
+    },
+    showReceiptNumber () {
+      return this.type === 'C' || this.type === 'R' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D');
     },
     stateType () {
       if (!this.type || this.type === '') {
@@ -589,8 +628,14 @@ export default {
       }
       return true;
     },
-    stateDriver () {
-      if (!this.driver || this.driver === '') {
+    stateDriverDocument () {
+      if (!this.driver_document || this.driver_document === '') {
+        return false;
+      }
+      return true;
+    },
+    stateDriverName () {
+      if (!this.driver_name || this.driver_name === '') {
         return false;
       }
       return true;
@@ -611,7 +656,7 @@ export default {
       return this.stateType && this.stateOperation && this.stateDate && this.stateTime && this.stateReferral &&
         this.stateReceipt && this.stateMaterial && this.statePlate && this.stateGrossWeight && this.stateTareWeight &&
         this.stateNetWeight && this.stateOriginYard && this.stateDestinyYard && this.stateConveyorCompany &&
-        this.stateDriver && this.stateSupplier && this.stateCustomer;
+        this.stateDriverDocument && this.stateDriverName && this.stateSupplier && this.stateCustomer;
     },
     renderOriginYard () {
       return this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P');
@@ -620,14 +665,13 @@ export default {
       return this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D');
     }
   },
-  mounted () {
-  },
   methods: {
     ...mapActions(types.PATH, {
       setShowModalForm: types.actions.SET_SHOW_MODAL_FORM,
       save: types.actions.SAVE,
       delete: types.actions.DELETE,
-      edit: types.actions.EDIT
+      edit: types.actions.EDIT,
+      setTypeAction: types.actions.SET_TYPE_ACTION
     }),
     ...mapActions(typesYard.PATH, {
       getOriginYards: typesYard.actions.GET_ORIGIN_YARDS,
@@ -645,15 +689,21 @@ export default {
       this.type = 'D';
       this.operation = 'P';
       this.referral_number = '';
-      this.date = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(6, 10) +
-                    '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(3, 5) +
-                    '-' + (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(0, 2);
-      this.time = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '').slice(11, 16);
+      const stringFullDate = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '');
+      const arrayFullDate = stringFullDate.split(' ');
+      let arrayDate = arrayFullDate[0].split('/');
+      let arrayTime = arrayFullDate[1].split(':');
+      arrayDate = arrayDate.map(function (x) { return x.padStart(2, '0'); });
+      arrayTime = arrayTime.map(function (x) { return x.padStart(2, '0'); });
+      this.date = arrayDate[2] + '-' + arrayDate[1] + '-' + arrayDate[0];
+      this.time = arrayTime[0] + ':' + arrayTime[1];
       this.material = null;
+      this.ash_percentage = 0;
       this.origin_yard = '';
       this.destiny_yard = '';
       this.conveyor_company = null;
-      this.driver = '';
+      this.driver_document = '';
+      this.driver_name = '';
       this.license_plate = '';
       this.trailer_number = '';
       this.gross_weight = '';
@@ -663,7 +713,6 @@ export default {
       this.customer = null;
       this.observation = '';
       this.round_trip = false;
-      this.setShowModalForm(false);
     },
     async handleForm (event) {
       event.preventDefault();
@@ -676,11 +725,13 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
           conveyor_company_name: this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.name)[0],
-          driver: this.driver,
+          driver_document: this.driver_document,
+          driver_name: this.driver_name,
           license_plate: this.license_plate,
           trailer_number: this.trailer_number,
           gross_weight: this.gross_weight,
@@ -688,8 +739,8 @@ export default {
           net_weight: this.net_weight,
           supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : null,
           supplier_name: this.type === 'C' || this.type === 'OP' ? this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.name)[0] : null,
-          customer: this.type === 'V' || this.type === 'OC' ? this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0] : null,
-          customer_name: this.type === 'V' || this.type === 'OC' ? this.customer : null,
+          customer: this.type === 'V' || this.type === 'OC' ? this.customer : null,
+          customer_name: this.type === 'V' || this.type === 'OC' ? this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0] : null,
           seals: this.seals.join(','),
           observation: this.observation,
           round_trip: this.round_trip && (this.type === 'D' || this.type === 'R') ? 1 : 0,
@@ -706,11 +757,13 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
           conveyor_company_name: this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.name)[0],
-          driver: this.driver,
+          driver_document: this.driver_document,
+          driver_name: this.driver_name,
           license_plate: this.license_plate,
           trailer_number: this.trailer_number,
           gross_weight: this.gross_weight,
@@ -718,8 +771,8 @@ export default {
           net_weight: this.net_weight,
           supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : null,
           supplier_name: this.type === 'C' || this.type === 'OP' ? this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.name)[0] : null,
-          customer: this.type === 'V' || this.type === 'OC' ? this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0] : null,
-          customer_name: this.type === 'V' || this.type === 'OC' ? this.customer : null,
+          customer: this.type === 'V' || this.type === 'OC' ? this.customer : null,
+          customer_name: this.type === 'V' || this.type === 'OC' ? this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0] : null,
           seals: this.seals.join(','),
           observation: this.observation,
           round_trip: this.round_trip && (this.type === 'D' || this.type === 'R') ? 1 : 0
@@ -778,7 +831,11 @@ export default {
       this.seals = this.seals.length > 0 ? this.seals.join(',').toUpperCase().split(',') : [];
     },
     formatDecimal (value) {
-      return value && value !== '' ? value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0] : '';
+      return value && value !== '' ? parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]) : 0;
+    },
+    closeModal () {
+      this.setTypeAction('');
+      this.setShowModalForm(false);
     }
   }
 };
