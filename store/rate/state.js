@@ -1,7 +1,6 @@
 const state = {
-  tiquets: [],
-  tiquetsToSynchronize: [],
-  tiquet: null,
+  rates: [],
+  rate: null,
   showModalForm: false,
   typeAction: 'create'
 };

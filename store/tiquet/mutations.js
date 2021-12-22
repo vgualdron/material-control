@@ -4,7 +4,7 @@ const mutations = {
     state.tiquets = payload;
   },
   [types.mutations.SET_NOT_SYNCHRONIZED_TIQUETS] (state, payload) {
-    state.tiquets = payload;
+    state.tiquetsToSynchronize = payload;
   },
   [types.mutations.SET_TIQUET] (state, payload) {
     state.tiquet = payload;

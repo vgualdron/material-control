@@ -140,6 +140,7 @@ export default {
     ]),
     ...mapState(types.PATH, [
       'tiquets',
+      'tiquetsToSynchronize',
       'tiquet'
     ]),
     items () {
@@ -200,9 +201,9 @@ export default {
     },
     async synchronize () {
       await this.getNotSynchronizedTiquets();
-      await this.setData(this.tiquets);
+      await this.setData(this.tiquetsToSynchronize);
       await this.getData();
-      await this.getTiquets();
+      // await this.search();
     }
   }
 };

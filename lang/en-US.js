@@ -6,6 +6,7 @@ export default {
   user: 'user',
   yard: 'yard',
   zone: 'zone',
+  rate: 'rate',
   role: 'role ',
   logout: 'logout',
   synchronize: 'synchronize'

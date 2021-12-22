@@ -6,7 +6,7 @@ const actions = {
   async [types.actions.GET_TIQUETS] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderState ?? true), { root: true });
     await tiquetApi.get(data).then((res) => {
-      commit(types.mutations.SET_TIQUETS, res);
+      commit(types.mutations.SET_TIQUETS, res.data);
     }).catch((error) => {
       console.log(error);
     }).finally((e) => {

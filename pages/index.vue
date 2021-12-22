@@ -65,7 +65,6 @@ export default {
       try {
         const result = await this.$axios.$get('https://novumcolombia.com/api/posts/');
         this.token = result;
-        console.log(result);
       } catch (e) {
         console.log(e);
       }

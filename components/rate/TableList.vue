@@ -1,7 +1,7 @@
 <template>
   <b-card
-    title="Gestionar tiquet"
-    sub-title="Opciones de listar, crear, modificar y eliminar tiquets">
+    title="Gestionar tarifa"
+    sub-title="Opciones de listar, crear, modificar y eliminar tarifas">
     <!-- User Interface controls -->
     <b-row>
       <b-col lg="12" class="my-1">
@@ -15,7 +15,6 @@
           ></b-form-input>
           <b-input-group-append>
             <b-button :disabled="!filter" @click="filter = ''">Limpiar</b-button>
-            <b-button class="ml-3" @click="synchronize()">Sincronizar</b-button>
             <b-button v-if="showInsert" class="ml-3" @click="showModal(null, 'create')">Nuevo</b-button>
           </b-input-group-append>
         </b-input-group>
@@ -36,10 +35,12 @@
         show-empty
         small
       >
+
+        <template #cell(rTrip)="row">
+          <b-form-checkbox :checked="row.item.roundTrip === '1' ? true : false" disabled>
+          </b-form-checkbox>
+        </template>
         <template #cell(actions)="row">
-          <b-button v-if="row.item.showDetail" size="sm" @click="row.toggleDetails" title="Ver detalle">
-            {{ row.detailsShowing ? 'Ocultar' : 'Ver' }} detalle
-          </b-button>
           <b-button v-if="row.item.showEdit" size="sm" @click="showModal(row.item, 'edit')" class="mr-1" title="Editar">
             <b-icon-pencil-fill></b-icon-pencil-fill>
           </b-button>
@@ -101,13 +102,11 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { typesAdminTiquet as types } from '@/store/adminTiquet/types';
-import { typesTiquet } from '@/store/tiquet/types';
-import { typesCommon } from '@/store/common/typesCommon';
-import { typesSynchronize } from '@/store/synchronize/types';
+import { typesRate as types } from '@/store/rate/types';
 import { typesYard } from '@/store/yard/types';
 import { typesMaterial } from '@/store/material/types';
 import { typesThird } from '@/store/third/types';
+import { typesCommon } from '@/store/common/typesCommon';
 import { BIconPencilFill, BIconTrashFill } from 'bootstrap-vue';
 import { inArray } from '@/helpers/common/array';
 
@@ -119,13 +118,17 @@ export default {
   },
   data () {
     return {
-      view: 'adminTiquet',
+      view: 'rate',
       fields: [
         { key: 'type', label: 'Tipo', sortable: true, class: 'text-center' },
-        { key: 'referral_number', label: 'N° Remisión', sortable: true, class: 'text-center' },
-        { key: 'receipt_number', label: 'N° Recibo', sortable: true, class: 'text-center' },
-        { key: 'material_name', label: 'Material', sortable: true, class: 'text-center' },
-        { key: 'date', label: 'Fecha', sortable: true, class: 'text-center' },
+        { key: 'movement', label: 'Movimiento', sortable: true, class: 'text-center' },
+        { key: 'originYardName', label: 'Patio origen', sortable: true, class: 'text-center' },
+        { key: 'destinyYardName', label: 'Patio destino', sortable: true, class: 'text-center' },
+        { key: 'customerOrSupplier', label: 'Cliente/Proveedor', sortable: true, class: 'text-center' },
+        { key: 'conveyorCompanyName', label: 'Emp. Transportadora', sortable: true, class: 'text-center' },
+        { key: 'startDate', label: 'Fecha Inicial', sortable: true, class: 'text-center' },
+        { key: 'finalDate', label: 'Fecha Final', sortable: true, class: 'text-center' },
+        { key: 'rTrip', label: 'Viaje Redondo', sortable: true, class: 'text-center' },
         { key: 'actions', label: 'Acciones', class: 'text-center' }
       ],
       totalRows: 1,
@@ -143,14 +146,11 @@ export default {
       'userPermisionsGroup'
     ]),
     ...mapState(types.PATH, [
-      'adminTiquets',
-      'adminTiquet'
-    ]),
-    ...mapState(typesTiquet.PATH, [
-      'tiquets'
+      'rates',
+      'rate'
     ]),
     items () {
-      return this.adminTiquets.data.map((item) => {
+      return this.rates.data.map((item) => {
         return {
           ...item,
           showDetail: inArray(`${this.view}.get`, this.userPermisionsGroup),
@@ -169,7 +169,7 @@ export default {
     }
   },
   watch: {
-    adminTiquets (val) {
+    rates (val) {
       this.totalRows = val.total;
       this.showInsert = inArray(`${this.view}.insert`, this.userPermisionsGroup);
       this.showList = inArray(`${this.view}.list`, this.userPermisionsGroup);
@@ -180,8 +180,8 @@ export default {
   },
   methods: {
     ...mapActions(types.PATH, {
-      getTiquets: types.actions.GET_TIQUETS,
-      setTiquet: types.actions.SET_TIQUET,
+      getRates: types.actions.GET_RATES,
+      setRate: types.actions.SET_RATE,
       setShowModalForm: types.actions.SET_SHOW_MODAL_FORM,
       setTypeAction: types.actions.SET_TYPE_ACTION
     }),
@@ -197,20 +197,13 @@ export default {
     ...mapActions(typesMaterial.PATH, {
       getMaterials: typesMaterial.actions.GET_MATERIALS
     }),
-    ...mapActions(typesSynchronize.PATH, {
-      getData: typesSynchronize.actions.GET_DATA_FROM_SERVER,
-      setData: typesSynchronize.actions.SET_DATA_TO_SERVER
-    }),
-    ...mapActions(typesTiquet.PATH, {
-      getNotSynchronizedTiquets: typesTiquet.actions.GET_NOT_SYNCHRONIZED_TIQUETS
-    }),
     async showModal (item, action) {
       let material = null;
       let destinyYard = null;
       let originYard = null;
       await this.setTypeAction(action);
       if (action !== 'create') {
-        await this.setTiquet({ ...item });
+        await this.setRate({ ...item });
         material = item.material;
         destinyYard = item.destiny_yard;
         originYard = item.origin_yard;
@@ -229,7 +222,7 @@ export default {
         page: this.currentPage,
         text: this.filter
       };
-      this.getTiquets(data);
+      this.getRates(data);
     },
     searchOriginYards (id) {
       const data = {
@@ -273,12 +266,6 @@ export default {
         loaderStateClose: true
       };
       await this.getMaterials(data);
-    },
-    async synchronize () {
-      await this.getNotSynchronizedTiquets();
-      await this.setData(this.tiquets);
-      await this.getData();
-      await this.getTiquets();
     }
   }
 };

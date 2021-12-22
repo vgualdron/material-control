@@ -1,5 +1,4 @@
 const createToast = (response) => {
-  console.log(response);
   const data = response.data;
   const toast = {
     solid: true,

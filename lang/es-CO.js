@@ -6,6 +6,7 @@ export default {
   user: 'usuario',
   yard: 'patio',
   zone: 'zona',
+  rate: 'tarifa',
   role: 'rol',
   logout: 'cerrar sesión',
   synchronize: 'sincronizar'

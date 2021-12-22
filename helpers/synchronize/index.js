@@ -1,9 +1,8 @@
 import websql from 'websql-promisified';
 
 async function getDataFromServer (data) {
-  console.log('data');
-  console.log(data);
   return await new Promise((resolve, reject) => {
+    console.log('getdatafromserverhelper1');
     if (!data || Object.keys(data).length === 0) {
       const response = { status: 500, data: { message: 'Error al cargar datos locales', errors: { sql: ['No se ha traido información desde el servidor'] } } };
       reject(response);
@@ -11,9 +10,9 @@ async function getDataFromServer (data) {
       const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
       if (!dataBase) {
         const response = { status: 500, data: { message: 'Error al cargar datos locales', errors: { sql: ['Se ha presentado un error al conectar con la base de datos local'] } } };
-        console.log('aqui 22222');
         reject(response);
       } else {
+        console.log('getdatafromserverhelper2');
         const websqlPromise = websql(dataBase);
         websqlPromise.transaction((tx) => {
           tx.executeSql('DROP TABLE IF EXISTS material;');
@@ -26,6 +25,19 @@ async function getDataFromServer (data) {
           tx.executeSql('DROP TABLE IF EXISTS user;');
           tx.executeSql('DROP TABLE IF EXISTS yard;');
           tx.executeSql('DROP TABLE IF EXISTS zone;');
+          tx.executeSql('CREATE TABLE zone (' +
+            'id integer PRIMARY KEY,' +
+            'code varchar(10) NOT NULL,' +
+            'name varchar(30) NOT NULL' +
+            ');'
+          );
+          tx.executeSql('CREATE TABLE yard (' +
+            'id integer PRIMARY KEY,' +
+            'code varchar(30) NOT NULL,' +
+            'name varchar(100) NOT NULL,' +
+            'zone int(20) DEFAULT NULL' +
+            ');'
+          );
           tx.executeSql('CREATE TABLE material (' +
             'id integer NOT NULL PRIMARY KEY,' +
             'code varchar(10) NOT NULL,' +
@@ -110,22 +122,8 @@ async function getDataFromServer (data) {
             'yard int(20) DEFAULT NULL' +
             ');'
           );
-          tx.executeSql('CREATE TABLE yard (' +
-            'id integer PRIMARY KEY,' +
-            'code varchar(30) NOT NULL,' +
-            'name varchar(100) NOT NULL,' +
-            'zone int(20) DEFAULT NULL' +
-            ');'
-          );
-          tx.executeSql('CREATE TABLE zone (' +
-            'id integer PRIMARY KEY,' +
-            'code varchar(10) NOT NULL,' +
-            'name varchar(30) NOT NULL' +
-            ');'
-          );
           /* synchronize zones */
           const objectZone = data.zone;
-          console.log(objectZone);
           for (let i = 0; i < objectZone.length; i++) {
             tx.executeSql('INSERT INTO zone VALUES (?, ?, ?)',
               [
@@ -147,7 +145,6 @@ async function getDataFromServer (data) {
               ]
             );
           };
-
           /* synchronize users */
           const objectUser = data.user;
           for (let i = 0; i < objectUser.length; i++) {
@@ -162,7 +159,6 @@ async function getDataFromServer (data) {
               ]
             );
           };
-
           /* synchronize model_has_roles */
           const objectModelHasRoles = data.model_has_roles;
           for (let i = 0; i < objectModelHasRoles.length; i++) {
@@ -174,7 +170,6 @@ async function getDataFromServer (data) {
               ]
             );
           };
-
           /* synchronize permissions */
           const objectPermission = data.permission;
           for (let i = 0; i < objectPermission.length; i++) {
@@ -190,7 +185,6 @@ async function getDataFromServer (data) {
               ]
             );
           };
-
           /* synchronize role */
           const objectRole = data.roles;
           for (let i = 0; i < objectRole.length; i++) {
@@ -202,7 +196,6 @@ async function getDataFromServer (data) {
               ]
             );
           };
-
           /* synchronize third */
           const objectThird = data.third;
           for (let i = 0; i < objectThird.length; i++) {
@@ -217,7 +210,6 @@ async function getDataFromServer (data) {
               ]
             );
           };
-
           /* synchronize yard */
           const objectYard = data.yard;
           for (let i = 0; i < objectYard.length; i++) {
@@ -230,7 +222,6 @@ async function getDataFromServer (data) {
               ]
             );
           };
-
           /* synchronize rolePermission */
           const objectRolePermission = data.role_has_permissions;
           for (let i = 0; i < objectRolePermission.length; i++) {
@@ -241,10 +232,8 @@ async function getDataFromServer (data) {
               ]
             );
           };
-
           /* synchronize tiquet */
           const objectTiquet = data.tiquet;
-          console.log(objectTiquet);
           for (let i = 0; i < objectTiquet.length; i++) {
             tx.executeSql('INSERT INTO tiquet VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
               [
@@ -281,9 +270,12 @@ async function getDataFromServer (data) {
             );
           };
         }).then(() => {
+          console.log('getdatafromserverhelper3');
           const response = { status: 200, data: { message: 'Los datos locales se han cargado exitosamente' } };
           resolve(response);
-        }).catch(() => {
+        }).catch((error) => {
+          console.log('getdatafromserverhelper4');
+          console.log(error);
           const response = { status: 500, data: { message: 'Error al cargar datos locales', errors: { sql: ['Se ha presentado un error de sql'] } } };
           reject(response);
         });
@@ -293,12 +285,15 @@ async function getDataFromServer (data) {
 }
 
 async function getNotSynchronizedTiquets () {
+  console.log('getNotSynchronizedTiquets1');
   // const response = { status: '200', data: { message: 'Tiquet creado con éxito' } };
   const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
   const websqlPromise = websql(dataBase);
   if (!dataBase) {
+    console.log('getNotSynchronizedTiquets2');
     alert('Lo sentimos, algo fue mal en la conexion de la base de datos local');
   } else {
+    console.log('getNotSynchronizedTiquets3');
     return await new Promise((resolve, reject) => {
       websqlPromise.transaction((tx) => {
         tx.executeSql('SELECT t.id id, t.type type, t.material material, t.ash_percentage ash_percentage, ' +
@@ -326,12 +321,14 @@ async function getNotSynchronizedTiquets () {
                       'WHERE t.synchronize = ? ' +
                       'ORDER BY t.deleted DESC', [1]);
       }).then((results) => {
+        console.log('getNotSynchronizedTiquets4');
         const result = [];
         for (let i = 0; i < results[0].rows.length; i++) {
           result.push(results[0].rows[i]);
         }
         resolve(result);
       }).catch(() => {
+        console.log('getNotSynchronizedTiquets5');
         const response = { status: 500, data: { message: 'Error al obtener tiquets', errors: { sql: ['Se ha presentado un error de SQL'] } } };
         reject(response);
       });
@@ -340,35 +337,45 @@ async function getNotSynchronizedTiquets () {
 }
 
 async function getTiquets (data) {
-  const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
-  if (!dataBase) {
-    alert('Lo sentimos, algo fue mal en la conexion de la base de datos local');
-  } else {
-    return await new Promise((resolve) => {
-      dataBase.transaction(function (tran) {
-        const text = '%' + (data?.text ? data.text : '') + '%';
-        tran.executeSql('SELECT t.id id, CASE t.type ' +
-                          'WHEN "D" THEN "DESPACHO " ' +
-                          'WHEN "R" THEN "RECEPCIÓN"  ' +
-                          'WHEN "C" THEN "COMPRA" ' +
-                          'WHEN "V" THEN "VENTA" ' +
-                          'WHEN "OC" THEN "OPERACIÓN CON CLIENTE" ' +
-                          'WHEN "OP" THEN "OPERACIÓN CON PROVEEDOR" ' +
-                          'END AS type, t.receipt_number, t.referral_number, ' +
-                          'm.name material_name, t.license_plate license_plate, ' +
-                          '(substr(t.date, 9, 2) || "/" || substr(t.date, 6, 2) || "/" || substr(t.date, 1, 4)) date ' +
-                        'FROM tiquet t ' +
-                        'LEFT JOIN material m ON t.material = m.id ' +
-                        'WHERE (t.receipt_number LIKE ? OR t.referral_number LIKE ? OR m.name LIKE ?) AND t.deleted <> 1', [text, text, text], function (tran, data) {
-          const result = [];
-          for (let i = 0; i < data.rows.length; i++) {
-            result.push(data.rows[i]);
-          }
-          resolve(result);
-        });
+  return await new Promise((resolve, reject) => {
+    console.log('getTiquets1');
+    const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
+    const websqlPromise = websql(dataBase);
+    if (!dataBase) {
+      alert('Lo sentimos, algo fue mal en la conexion de la base de datos local');
+    } else {
+      console.log('getTiquets2');
+      const text = '%' + (data?.text ? data.text : '') + '%';
+      websqlPromise.transaction((tx) => {
+        tx.executeSql('SELECT t.id id, CASE t.type ' +
+                        'WHEN "D" THEN "DESPACHO " ' +
+                        'WHEN "R" THEN "RECEPCIÓN"  ' +
+                        'WHEN "C" THEN "COMPRA" ' +
+                        'WHEN "V" THEN "VENTA" ' +
+                        'WHEN "OC" THEN "OPERACIÓN CON CLIENTE" ' +
+                        'WHEN "OP" THEN "OPERACIÓN CON PROVEEDOR" ' +
+                        'END AS type, t.receipt_number, t.referral_number, ' +
+                        'm.name material_name, t.license_plate license_plate, ' +
+                        '(substr(t.date, 9, 2) || "/" || substr(t.date, 6, 2) || "/" || substr(t.date, 1, 4)) date ' +
+                      'FROM tiquet t ' +
+                      'LEFT JOIN material m ON t.material = m.id ' +
+                      'WHERE (t.receipt_number LIKE ? OR t.referral_number LIKE ? OR m.name LIKE ?) AND t.deleted <> 1', [text, text, text]);
+      }).then((results) => {
+        console.log(results);
+        console.log('getTiquets3');
+        const result = [];
+        for (let i = 0; i < results[0].rows.length; i++) {
+          result.push(results[0].rows[i]);
+        }
+        const response = { status: 200, data: result };
+        console.log(response);
+        resolve(response);
+      }).catch(() => {
+        const response = { status: 500, data: { message: 'Error al registrar tiquet', errors: { sql: ['Se ha presentado un error de SQL'] } } };
+        reject(response);
       });
-    });
-  }
+    }
+  });
 }
 
 async function getTiquet (id) {
@@ -390,40 +397,6 @@ async function getTiquet (id) {
     });
   }
 }
-
-/* async function insertTiquet (data) {
-  const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
-  const websqlPromise = websql(dataBase);
-  if (!dataBase) {
-    alert('Lo sentimos, algo fue mal en la conexion de la base de datos local');
-  } else {
-    return await new Promise((resolve, reject) => {
-      websqlPromise.transaction((tx) => {
-        const stringFullDate = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '');
-        const arrayFullDate = stringFullDate.split(' ');
-        let arrayDate = arrayFullDate[0].split('/');
-        arrayDate = arrayDate.map(function (x) { return x.padStart(2, '0'); });
-        const currentDate = arrayDate[2] + '-' + arrayDate[1] + '-' + arrayDate[0];
-        tx.executeSql('INSERT INTO tiquet (type, operation, user, origin_yard, destiny_yard, supplier, customer, ' +
-                        'material, ash_percentage, receipt_number, referral_number, date, time, license_plate, trailer_number, ' +
-                        'driver_name, driver_document, gross_weight, tare_weight, net_weight, conveyor_company, observation, seals, ' +
-                        'round_trip, local_created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [
-          data.type, data.operation, data.user, data.origin_yard, data.destiny_yard, data.supplier, data.customer,
-          data.material, data.ash_percentage, data.receipt_number, data.referral_number, data.date, data.time,
-          data.license_plate, data.trailer_number, data.driver_name, data.driver_document, data.gross_weight,
-          data.tare_weight, data.net_weight, data.conveyor_company, data.observation, data.seals, data.round_trip,
-          currentDate
-        ]);
-      }).then((results) => {
-        const response = { status: 200, data: { message: 'Tiquet creado con éxito' } };
-        resolve(response);
-      }).catch(() => {
-        const response = { status: 500, data: { message: 'Error al registrar tiquet', errors: { sql: ['Se ha presentado un error de SQL'] } } };
-        reject(response);
-      });
-    });
-  }
-} */
 
 async function insertTiquet (data) {
   const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
@@ -543,56 +516,6 @@ async function updateTiquet (data) {
     });
   }
 }
-/*
-async function updateTiquet (data) {
-  const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
-  const websqlPromise = websql(dataBase);
-  if (!dataBase) {
-    alert('Lo sentimos, algo fue mal en la conexion de la base de datos local');
-  } else {
-    return await new Promise((resolve, reject) => {
-      websqlPromise.transaction((tx) => {
-        tx.executeSql('UPDATE tiquet SET type = ?, ' +
-                              'operation = ?, ' +
-                              'user = ?, ' +
-                              'origin_yard = ?, ' +
-                              'destiny_yard = ?, ' +
-                              'supplier = ?, ' +
-                              'customer = ?, ' +
-                              'material = ?, ' +
-                              'ash_percentage = ?, ' +
-                              'receipt_number = ?, ' +
-                              'referral_number = ?, ' +
-                              'date = ?, ' +
-                              'time = ?, ' +
-                              'license_plate = ?, ' +
-                              'trailer_number = ?, ' +
-                              'driver_document = ?, ' +
-                              'driver_name = ?, ' +
-                              'gross_weight = ?, ' +
-                              'tare_weight = ?, ' +
-                              'net_weight = ?, ' +
-                              'conveyor_company = ?, ' +
-                              'observation = ?, ' +
-                              'seals = ?, ' +
-                              'round_trip = ?, ' +
-                              'synchronize = ? ' +
-                      'WHERE id = ?', [
-          data.type, data.operation, data.user, data.origin_yard, data.destiny_yard, data.supplier, data.customer,
-          data.material, data.ash_percentage, data.receipt_number, data.referral_number, data.date, data.time, data.license_plate,
-          data.trailer_number, data.driver_document, data.driver_name, data.gross_weight, data.tare_weight, data.net_weight, data.conveyor_company,
-          data.observation, data.seals, data.round_trip, 1, data.id
-        ]);
-      }).then(() => {
-        const response = { status: 200, data: { message: 'Tiquet actualizado con éxito' } };
-        resolve(response);
-      }).catch(() => {
-        const response = { status: 500, data: { message: 'Error al actualizar tiquet', errors: { sql: ['Se ha presentado un error de SQL'] } } };
-        reject(response);
-      });
-    });
-  }
-} */
 
 async function deleteTiquet (id) {
   const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
