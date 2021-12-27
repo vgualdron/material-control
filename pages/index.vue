@@ -44,7 +44,13 @@ export default {
       'token'
     ]),
     ...mapState(typesTiquet.PATH, [
-      'tiquets'
+      'tiquets',
+      'tiquetsToSynchronize',
+      'statusTiquet'
+    ]),
+    ...mapState(typesSynchronize.PATH, [
+      'statusSynchronize',
+      'dataFromServer'
     ])
   },
   mounted () {
@@ -53,7 +59,8 @@ export default {
   methods: {
     ...mapActions(typesSynchronize.PATH, {
       getData: typesSynchronize.actions.GET_DATA_FROM_SERVER,
-      setData: typesSynchronize.actions.SET_DATA_TO_SERVER
+      setData: typesSynchronize.actions.SET_DATA_TO_SERVER,
+      setDataToLocale: typesSynchronize.actions.SET_DATA_TO_LOCALE
     }),
     ...mapActions(typesTiquet.PATH, {
       getNotSynchronizedTiquets: typesTiquet.actions.GET_NOT_SYNCHRONIZED_TIQUETS
@@ -84,8 +91,15 @@ export default {
     },
     async synchronize () {
       await this.getNotSynchronizedTiquets();
-      await this.setData(this.tiquets);
-      await this.getData();
+      if (this.statusTiquet) {
+        await this.setData(this.tiquetsToSynchronize);
+        if (this.statusSynchronize) {
+          await this.getData();
+          if (this.statusSynchronize) {
+            await this.setDataToLocale(this.dataFromServer);
+          }
+        }
+      }
     }
   }
 };

@@ -11,12 +11,11 @@
       <b-icon-x class="icon-close" font-scale="2" @click="resetInfoModal()" />
     </template>
     <b-form @submit="handleForm">
-      <b-form-group>
+      <b-form-group class="mb-1">
         <label for="feedback-code">Código</label>
         <b-form-input
           id="feedback-code"
           v-model="code"
-          :state="validationCode"
           type="text"
           :disabled="disabledElements"
           v-mask="'AA##'"
@@ -26,12 +25,11 @@
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group>
-        <label for="feedback-name" class="mt-3">Nombre</label>
+      <b-form-group class="mb-1">
+        <label for="feedback-name">Nombre</label>
         <b-form-input
           id="feedback-name"
           v-model="name"
-          :state="validationName"
           type="text"
           :disabled="disabledElements"
           :formatter="upperFormatter"
@@ -41,8 +39,8 @@
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
       </b-form-group>
-      <b-form-group>
-        <label for="feedback-zone" class="mt-3">Zona</label>
+      <b-form-group class="mb-1">
+        <label for="feedback-zone">Zona</label>
         <v-select
           v-if="zones && zones.data"
           :filterable="false"
@@ -56,9 +54,31 @@
           @search="searchZones"
           @close="searchZones"
         />
-        <b-form-invalid-feedback>
+        <b-form-invalid-feedback :state="validationZone">
           {{ labelTextFieldRequired }}
         </b-form-invalid-feedback>
+      </b-form-group>
+      <b-form-group class="mb-1">
+        <label for="feedback-longitude">Longitud</label>
+        <b-form-input
+          id="feedback-longitude"
+          v-model="longitude"
+          step="0.000001"
+          type="number"
+          :disabled="disabledElements"
+          :formatter="formatLongitude"
+        />
+      </b-form-group>
+      <b-form-group class="mb-1">
+        <label for="feedback-latitude">Latitud</label>
+        <b-form-input
+          id="feedback-latitude"
+          v-model="latitude"
+          step="0.000001"
+          type="number"
+          :disabled="disabledElements"
+          :formatter="formatLatitude"
+        />
       </b-form-group>
       <b-button
         id="button-submit"
@@ -100,6 +120,8 @@ export default {
       code: '',
       name: '',
       zone: '',
+      latitude: null,
+      longitude: null,
       searchInput: '',
       labelTextFieldRequired: 'Campo obligatorio',
       disabledElements: false
@@ -131,11 +153,15 @@ export default {
         this.code = '';
         this.name = '';
         this.zone = '';
+        this.longitude = '';
+        this.latitude = '';
       }
       if (this.typeAction === 'edit' || this.typeAction === 'delete') {
         this.code = val.code;
         this.name = val.name;
         this.zone = parseInt(val.zone);
+        this.longitude = val.longitude;
+        this.latitude = val.latitude;
       }
     }
   },
@@ -158,7 +184,11 @@ export default {
       return this.name.length > 0;
     },
     validationZone () {
-      return this.zone;
+      if (this.zone === null || this.zone === '') {
+        return false;
+      } else {
+        return true;
+      }
     }
   },
   mounted () {
@@ -177,6 +207,8 @@ export default {
       this.name = '';
       this.code = '';
       this.zone = '';
+      this.longitude = null;
+      this.latitude = null;
       this.setShowModalForm(false);
     },
     async handleForm (event) {
@@ -185,15 +217,20 @@ export default {
         await this.save({
           code: this.code,
           name: this.name,
-          zone: this.zone
+          zone: this.zone,
+          longitude: this.longitude === null || this.longitude === '' ? null : this.longitude,
+          latitude: this.latitude === null || this.latitude === '' ? null : this.latitude
         });
       }
       if (this.typeAction === 'edit') {
+        console.log(this.latitude);
         await this.edit({
           id: this.yard.id,
           code: this.code,
           name: this.name,
-          zone: this.zone
+          zone: this.zone,
+          longitude: this.longitude === null || this.longitude === '' ? null : this.longitude,
+          latitude: this.latitude === null || this.latitude === '' ? null : this.latitude
         });
       }
       if (this.typeAction === 'delete') {
@@ -209,6 +246,34 @@ export default {
         loaderState: false
       };
       this.getZones(data);
+    },
+    formatLongitude (value) {
+      value = value !== null && value !== '' ? parseFloat(value) : null;
+      let valueReturn = value !== null ? parseFloat(value) : null;
+      if (value !== null) {
+        if (value > 180) {
+          valueReturn = 180;
+        } else if (value < -180) {
+          valueReturn = -180;
+        } else {
+          valueReturn = parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,6})?/)[0]);
+        }
+      }
+      return valueReturn;
+    },
+    formatLatitude (value) {
+      value = value !== null && value !== '' ? parseFloat(value) : null;
+      let valueReturn = value !== null ? parseFloat(value) : null;
+      if (value !== null) {
+        if (value > 90) {
+          valueReturn = 90;
+        } else if (value < -90) {
+          valueReturn = -90;
+        } else {
+          valueReturn = parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,6})?/)[0]);
+        }
+      }
+      return valueReturn;
     },
     upperFormatter (value) {
       return value.toUpperCase();

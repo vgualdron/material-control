@@ -369,9 +369,6 @@
           :disabled="disabledElements"
           >
         </b-form-textarea>
-        <b-form-invalid-feedback>
-          {{ labelTextFieldRequired }}
-        </b-form-invalid-feedback>
       </b-form-group>
       <b-form-group>
         <b-form-checkbox
@@ -831,6 +828,7 @@ export default {
       this.seals = this.seals.length > 0 ? this.seals.join(',').toUpperCase().split(',') : [];
     },
     formatDecimal (value) {
+      value = value && value !== '' ? parseFloat(value) : null;
       return value && value !== '' ? parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]) : 0;
     },
     closeModal () {

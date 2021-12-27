@@ -41,6 +41,7 @@ const actions = {
     });
   },
   async [types.actions.EDIT] ({ commit, dispatch }, data) {
+    console.log(data);
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
     await materialApi.edit(data).then((resp) => {
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, resp, { root: true });

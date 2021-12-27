@@ -1,8 +1,8 @@
 import websql from 'websql-promisified';
 
-async function getDataFromServer (data) {
+async function setDataToLocale (data) {
   return await new Promise((resolve, reject) => {
-    console.log('getdatafromserverhelper1');
+    console.log('setDataToLocalehelpers1');
     if (!data || Object.keys(data).length === 0) {
       const response = { status: 500, data: { message: 'Error al cargar datos locales', errors: { sql: ['No se ha traido información desde el servidor'] } } };
       reject(response);
@@ -12,7 +12,7 @@ async function getDataFromServer (data) {
         const response = { status: 500, data: { message: 'Error al cargar datos locales', errors: { sql: ['Se ha presentado un error al conectar con la base de datos local'] } } };
         reject(response);
       } else {
-        console.log('getdatafromserverhelper2');
+        console.log('setDataToLocalehelper2');
         const websqlPromise = websql(dataBase);
         websqlPromise.transaction((tx) => {
           tx.executeSql('DROP TABLE IF EXISTS material;');
@@ -270,12 +270,10 @@ async function getDataFromServer (data) {
             );
           };
         }).then(() => {
-          console.log('getdatafromserverhelper3');
-          const response = { status: 200, data: { message: 'Los datos locales se han cargado exitosamente' } };
+          const response = { status: 200, data: { message: 'La sincronización ha finalizado exitosamente' } };
           resolve(response);
-        }).catch((error) => {
-          console.log('getdatafromserverhelper4');
-          console.log(error);
+        }).catch(() => {
+          console.log('setDataToLocalehelper4');
           const response = { status: 500, data: { message: 'Error al cargar datos locales', errors: { sql: ['Se ha presentado un error de sql'] } } };
           reject(response);
         });
@@ -285,18 +283,121 @@ async function getDataFromServer (data) {
 }
 
 async function getNotSynchronizedTiquets () {
-  console.log('getNotSynchronizedTiquets1');
-  // const response = { status: '200', data: { message: 'Tiquet creado con éxito' } };
-  const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
-  const websqlPromise = websql(dataBase);
-  if (!dataBase) {
-    console.log('getNotSynchronizedTiquets2');
-    alert('Lo sentimos, algo fue mal en la conexion de la base de datos local');
-  } else {
-    console.log('getNotSynchronizedTiquets3');
-    return await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
+    console.log('getNotSynchronizedTiquets1');
+    // const response = { status: '200', data: { message: 'Tiquet creado con éxito' } };
+    const dataBase = openDatabase('dbNovum', '1.0', 'Novum Database', 3 * 1024 * 1024);
+    const websqlPromise = websql(dataBase);
+    if (!dataBase) {
+      const response = { status: 500, data: { message: 'Error al conectarse a la base de datos', errors: { sql: ['Se ha presentado un error de SQL'] } } };
+      reject(response);
+    } else {
       websqlPromise.transaction((tx) => {
-        tx.executeSql('SELECT t.id id, t.type type, t.material material, t.ash_percentage ash_percentage, ' +
+        tx.executeSql('SELECT name FROM sqlite_master WHERE type="table" AND name="user"');
+      }).then((results) => {
+        console.log('getNotSynchronizedTiquets4');
+        const exists = results[0].rows.length > 0 ? results[0].rows[0].name : null;
+        websqlPromise.transaction((tx) => {
+          if (exists === null) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS zone (' +
+              'id integer PRIMARY KEY,' +
+              'code varchar(10) NOT NULL,' +
+              'name varchar(30) NOT NULL' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS yard (' +
+              'id integer PRIMARY KEY,' +
+              'code varchar(30) NOT NULL,' +
+              'name varchar(100) NOT NULL,' +
+              'zone int(20) DEFAULT NULL' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS material (' +
+              'id integer NOT NULL PRIMARY KEY,' +
+              'code varchar(10) NOT NULL,' +
+              'name varchar(150) NOT NULL,' +
+              'unit varchar(2) NOT NULL' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS model_has_roles (' +
+              'role_id integer NOT NULL,' +
+              'model_type varchar(125) NOT NULL,' +
+              'model_id int(20) NOT NULL' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS permissions (' +
+              'id integer NOT NULL PRIMARY KEY,' +
+              'name varchar(125) NOT NULL,' +
+              'guard_name varchar(125) NOT NULL,' +
+              'is_function int(10) NOT NULL,' +
+              'display_name varchar(125) NOT NULL,' +
+              'offline int(10) NOT NULL,' +
+              'general int(10) NOT NULL' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS roles (' +
+              'id integer NOT NULL PRIMARY KEY,' +
+              'name varchar(125) NOT NULL,' +
+              'guard_name varchar(125) NOT NULL' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS role_has_permissions (' +
+              'permission_id int(20) NOT NULL,' +
+              'role_id int(20) NOT NULL' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS third (' +
+              'id integer PRIMARY KEY,' +
+              'nit int(20) NOT NULL,' +
+              'name varchar(255) NOT NULL,' +
+              'customer id(1) NOT NULL,' +
+              'associated id(1) NOT NULL,' +
+              'contractor id(1) NOT NULL' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS tiquet (' +
+              'id integer PRIMARY KEY,' +
+              'type varchar(2) DEFAULT NULL,' +
+              'operation varchar(1) DEFAULT NULL,' +
+              'user int(20) DEFAULT NULL,' +
+              'origin_yard int(20) DEFAULT NULL,' +
+              'destiny_yard int(20) DEFAULT NULL,' +
+              'supplier int(20) DEFAULT NULL,' +
+              'customer int(20) DEFAULT NULL,' +
+              'material int(20) DEFAULT NULL,' +
+              'ash_percentage decimal(8,2) DEFAULT 0,' +
+              'receipt_number varchar(50) DEFAULT NULL,' +
+              'referral_number varchar(50) DEFAULT NULL,' +
+              'date date DEFAULT NULL,' +
+              'time time DEFAULT NULL,' +
+              'license_plate varchar(50) DEFAULT NULL,' +
+              'trailer_number varchar(50) DEFAULT NULL,' +
+              'driver_name varchar(100) DEFAULT NULL,' +
+              'driver_document varchar(100) DEFAULT NULL,' +
+              'gross_weight decimal(8,2) DEFAULT NULL,' +
+              'tare_weight decimal(8,2) DEFAULT NULL,' +
+              'net_weight decimal(8,2) DEFAULT NULL,' +
+              'conveyor_company int(20) DEFAULT NULL,' +
+              'observation varchar(200) DEFAULT NULL,' +
+              'seals varchar(50) DEFAULT NULL,' +
+              'round_trip int(1) DEFAULT 0,' +
+              'local_created_at date,' +
+              'synchronize int(1) DEFAULT 1,' +
+              'synchronized int(1) DEFAULT 0,' +
+              'deleted int(1) DEFAULT 0' +
+              ');'
+            );
+            tx.executeSql('CREATE TABLE IF NOT EXISTS user (' +
+              'id integer NOT NULL PRIMARY KEY,' +
+              'name varchar(255) NOT NULL,' +
+              'document_number varchar(50) NOT NULL,' +
+              'phone varchar(50) NOT NULL,' +
+              'password varchar(255) NOT NULL,' +
+              'yard int(20) DEFAULT NULL' +
+              ');'
+            );
+          }
+          tx.executeSql('SELECT t.id id, t.type type, t.material material, t.ash_percentage ash_percentage, ' +
                         't.date date, t.time time, t.license_plate  license_plate, t.user user, t.driver_name driver_name, ' +
                         't.driver_document driver_document, t.local_created_at local_created_at, t.gross_weight ' +
                         'gross_weight, t.tare_weight tare_weight, t.net_weight net_weight, t.conveyor_company conveyor_company, ' +
@@ -320,20 +421,23 @@ async function getNotSynchronizedTiquets () {
                       'LEFT JOIN third tcc ON t.conveyor_company = tcc.id ' +
                       'WHERE t.synchronize = ? ' +
                       'ORDER BY t.deleted DESC', [1]);
-      }).then((results) => {
-        console.log('getNotSynchronizedTiquets4');
-        const result = [];
-        for (let i = 0; i < results[0].rows.length; i++) {
-          result.push(results[0].rows[i]);
-        }
-        resolve(result);
+        }).then((results) => {
+          const result = [];
+          for (let i = 0; i < results[0].rows.length; i++) {
+            result.push(results[0].rows[i]);
+          }
+          resolve(result);
+        }).catch(() => {
+          const response = { status: 500, data: { message: 'Error al obtener tiquets locales', errors: { sql: ['Se ha presentado un error de SQL al tratar de obtener los datos locales'] } } };
+          reject(response);
+        });
       }).catch(() => {
         console.log('getNotSynchronizedTiquets5');
-        const response = { status: 500, data: { message: 'Error al obtener tiquets', errors: { sql: ['Se ha presentado un error de SQL'] } } };
+        const response = { status: 500, data: { message: 'Error al obtener tiquets locales', errors: { sql: ['Se ha presentado un error de SQL al verificar la existencia de la base de datos'] } } };
         reject(response);
       });
-    });
-  }
+    }
+  });
 }
 
 async function getTiquets (data) {
@@ -361,14 +465,12 @@ async function getTiquets (data) {
                       'LEFT JOIN material m ON t.material = m.id ' +
                       'WHERE (t.receipt_number LIKE ? OR t.referral_number LIKE ? OR m.name LIKE ?) AND t.deleted <> 1', [text, text, text]);
       }).then((results) => {
-        console.log(results);
         console.log('getTiquets3');
         const result = [];
         for (let i = 0; i < results[0].rows.length; i++) {
           result.push(results[0].rows[i]);
         }
         const response = { status: 200, data: result };
-        console.log(response);
         resolve(response);
       }).catch(() => {
         const response = { status: 500, data: { message: 'Error al registrar tiquet', errors: { sql: ['Se ha presentado un error de SQL'] } } };
@@ -638,7 +740,7 @@ async function getMaterials (data) {
 }
 
 export {
-  getDataFromServer,
+  setDataToLocale,
   getNotSynchronizedTiquets,
   getTiquet,
   getTiquets,

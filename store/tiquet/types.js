@@ -7,6 +7,7 @@ export const typesTiquet = {
     SET_TIQUETS: '@mutations/setTiquets',
     SET_NOT_SYNCHRONIZED_TIQUETS: '@mutations/setNotSynchronizedTiquets',
     SET_TIQUET: '@mutations/setTiquet',
+    SET_STATUS: '@mutations/setStatus',
     SET_SHOW_MODAL_FORM: '@mutations/setShowModalForm',
     SET_TYPE_ACTION: '@mutations/setTypeAction'
   },

@@ -6,6 +6,9 @@ const mutations = {
   [types.mutations.SET_NOT_SYNCHRONIZED_TIQUETS] (state, payload) {
     state.tiquetsToSynchronize = payload;
   },
+  [types.mutations.SET_STATUS] (state, payload) {
+    state.statusTiquet = payload;
+  },
   [types.mutations.SET_TIQUET] (state, payload) {
     state.tiquet = payload;
   },

@@ -147,7 +147,14 @@ export default {
       'adminTiquet'
     ]),
     ...mapState(typesTiquet.PATH, [
-      'tiquets'
+      'tiquets',
+      'tiquetsToSynchronize',
+      'tiquet',
+      'statusTiquet'
+    ]),
+    ...mapState(typesSynchronize.PATH, [
+      'statusSynchronize',
+      'dataFromServer'
     ]),
     items () {
       return this.adminTiquets.data.map((item) => {
@@ -199,7 +206,8 @@ export default {
     }),
     ...mapActions(typesSynchronize.PATH, {
       getData: typesSynchronize.actions.GET_DATA_FROM_SERVER,
-      setData: typesSynchronize.actions.SET_DATA_TO_SERVER
+      setData: typesSynchronize.actions.SET_DATA_TO_SERVER,
+      setDataToLocale: typesSynchronize.actions.SET_DATA_TO_LOCALE
     }),
     ...mapActions(typesTiquet.PATH, {
       getNotSynchronizedTiquets: typesTiquet.actions.GET_NOT_SYNCHRONIZED_TIQUETS
@@ -276,9 +284,16 @@ export default {
     },
     async synchronize () {
       await this.getNotSynchronizedTiquets();
-      await this.setData(this.tiquets);
-      await this.getData();
-      await this.getTiquets();
+      if (this.statusTiquet) {
+        await this.setData(this.tiquetsToSynchronize);
+        if (this.statusSynchronize) {
+          await this.getData();
+          if (this.statusSynchronize) {
+            await this.setDataToLocale(this.dataFromServer);
+            await this.getTiquets();
+          }
+        }
+      }
     }
   }
 };

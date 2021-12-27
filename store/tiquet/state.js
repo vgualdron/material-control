@@ -3,6 +3,7 @@ const state = {
   tiquetsToSynchronize: [],
   tiquet: null,
   showModalForm: false,
+  statusTiquet: false,
   typeAction: 'create'
 };
 export default state;

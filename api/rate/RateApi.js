@@ -27,7 +27,6 @@ export default class RateApi {
   }
 
   async edit (data) {
-    console.log(data);
     return await axios.put(`${envConfig.urlApi}/${endpoints.primary}/${data.id}`, data, { headers: AuthHeader() });
   }
 }

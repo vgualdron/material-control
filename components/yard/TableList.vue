@@ -36,9 +36,6 @@
         small
       >
         <template #cell(actions)="row">
-          <b-button v-if="row.item.showDetail" size="sm" @click="row.toggleDetails" title="Ver detalle">
-            {{ row.detailsShowing ? 'Ocultar' : 'Ver' }} detalle
-          </b-button>
           <b-button v-if="row.item.showEdit" size="sm" @click="showModal(row.item, 'edit')" class="mr-1" title="Editar">
             <b-icon-pencil-fill></b-icon-pencil-fill>
           </b-button>
@@ -46,60 +43,41 @@
             <b-icon-trash-fill></b-icon-trash-fill>
           </b-button>
         </template>
-
-        <template #row-details="row">
-          <b-card>
-            <ul>
-              <div>
-                <li>
-                  <b>Código:</b> {{ row.item.code }}
-                </li>
-                <li>
-                  <b>Nombre:</b> {{ row.item.name }}
-                </li>
-                <li>
-                  <b>Zona:</b> {{ row.item.zoneName }}
-                </li>
-              </div>
-            </ul>
-          </b-card>
-        </template>
-      </b-table>
-
-      <b-row>
-        <b-col sm="9" md="9" class="my-1" style="float: right;">
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            align="fill"
-            size="sm"
-            class="my-0"
-            pills
-            @input="search"
-          ></b-pagination>
-        </b-col>
-        <b-col sm="3" md="3" class="my-1" style="display: inline-block;">
-          <b-form-group
-            label="Por página"
-            label-for="per-page-select"
-            label-cols-sm="8"
-            label-cols-md="8"
-            label-cols-lg="8"
-            label-align-sm="right"
-            label-size="sm"
-            class="mb-0"
-          >
-            <b-form-select
-              id="per-page-select"
-              v-model="perPage"
-              :options="pageOptions"
+        <b-row>
+          <b-col sm="9" md="9" class="my-1" style="float: right;">
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              align="fill"
               size="sm"
-              @change="search"
-            ></b-form-select>
-          </b-form-group>
-        </b-col>
-      </b-row>
+              class="my-0"
+              pills
+              @input="search"
+            ></b-pagination>
+          </b-col>
+          <b-col sm="3" md="3" class="my-1" style="display: inline-block;">
+            <b-form-group
+              label="Por página"
+              label-for="per-page-select"
+              label-cols-sm="8"
+              label-cols-md="8"
+              label-cols-lg="8"
+              label-align-sm="right"
+              label-size="sm"
+              class="mb-0"
+            >
+              <b-form-select
+                id="per-page-select"
+                v-model="perPage"
+                :options="pageOptions"
+                size="sm"
+                @change="search"
+              ></b-form-select>
+            </b-form-group>
+          </b-col>
+        </b-row>
+      </b-table>
     </template>
   </b-card>
 </template>

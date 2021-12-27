@@ -71,9 +71,10 @@ const actions = {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderState ?? true), { root: true });
     await tiquetApi.getNotSynchronized().then((res) => {
       commit(types.mutations.SET_NOT_SYNCHRONIZED_TIQUETS, res);
+      commit(types.mutations.SET_STATUS, true);
     }).catch((error) => {
-      console.log(error);
-    }).finally((e) => {
+      dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_TOAST}`, error, { root: true });
+      commit(types.mutations.SET_STATUS, false);
       dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, false, { root: true });
     });
   }
