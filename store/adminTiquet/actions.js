@@ -1,4 +1,4 @@
-import AdminTiquetApi from '@/api/adminTiquet/adminTiquetApi';
+import AdminTiquetApi from '../../api/adminTiquet/adminTiquetApi';
 import { typesCommon } from '@/store/common/typesCommon';
 import { typesAdminTiquet as types } from './types';
 const adminTiquetApi = new AdminTiquetApi();
