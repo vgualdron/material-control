@@ -1,7 +1,6 @@
-import AuthApi from '@/api/auth/AuthApi';
+import authApi from '@/api/auth/authApi';
 import { typesCommon } from '@/store/common/typesCommon';
 import { typesAuth as types } from './types';
-const authApi = new AuthApi();
 const actions = {
   async [types.actions.GET_ACTIVE_TOKEN] ({ commit, dispatch }) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, true, { root: true });
