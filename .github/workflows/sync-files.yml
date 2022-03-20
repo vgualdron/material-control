@@ -1,0 +1,25 @@
+name: Sync files
+on: 
+  workflow_run:
+    workflows: [pages-build-deployment]
+    types: [completed]
+    branches: [gh-pages]
+jobs:
+  web-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest code 🚚
+        uses: actions/checkout@v2
+        with:
+          persist-credential: false
+
+      - name: Sync files 📂
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: ${{ secrets.FTP_SERVER_NAME }}
+          username: ${{ secrets.FTP_USER_NAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          security: loose
+          log-level: verbose
+          protocol: ftps
+          dangerous-clean-slate: true
