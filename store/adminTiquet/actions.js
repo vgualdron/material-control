@@ -1,7 +1,6 @@
-import AdminTiquetApi from '../../api/adminTiquet/adminTiquetApi';
+import adminTiquetApi from '../../api/adminTiquet/adminTiquetApi';
 import { typesCommon } from '@/store/common/typesCommon';
 import { typesAdminTiquet as types } from './types';
-const adminTiquetApi = new AdminTiquetApi();
 const actions = {
   async [types.actions.GET_TIQUETS] ({ commit, dispatch }, data) {
     dispatch(`${typesCommon.PATH}/${typesCommon.actions.SET_LOADER_STATUS}`, (data?.loaderState ?? true), { root: true });
