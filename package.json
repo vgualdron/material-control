@@ -29,7 +29,8 @@
     "nuxt-vue-select": "^0.1.4",
     "vue-select": "^3.12.2",
     "vue-the-mask": "^0.11.1",
-    "websql-promisified": "^1.2.0"
+    "websql-promisified": "^1.2.0",
+    "sass": "^1.49.9"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",
@@ -42,8 +43,7 @@
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-vue": "^7.7.0",
     "jest": "^26.6.3",
-    "node-sass": "^5.0.0",
-    "sass-loader": "10.1.1",
+    "sass-loader": "^10.2.1",
     "vue-jest": "^3.0.4"
   }
 }
