@@ -1,4 +1,4 @@
-import adminTiquetApi from '../../api/adminTiquet/adminTiquetApi';
+import adminTiquetApi from '@/api/adminTiquet/adminTiquetApi';
 import { typesCommon } from '@/store/common/typesCommon';
 import { typesAdminTiquet as types } from './types';
 const actions = {
