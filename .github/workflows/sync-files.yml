@@ -3,7 +3,7 @@ on:
   workflow_run:
     workflows: [pages-build-deployment]
     types: [completed]
-    branches: [gh-pages]
+    branches: [master]
 jobs:
   web-deploy:
     runs-on: ubuntu-latest
