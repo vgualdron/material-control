@@ -1,8 +1,9 @@
 name: Sync files
 on: 
-  commit:
-    branches:
-      - gh-pages
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+    branches: [gh-pages]
 jobs:
   web-deploy:
     runs-on: ubuntu-latest
