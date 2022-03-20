@@ -27,6 +27,6 @@ jobs:
       - name: Sync files 📂
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
-          server: 92.204.218.60 # ${{ secrets.FTP_SERVER_NAME }}
-          username: vgualdron@novumcolombia.com # ${{ secrets.FTP_PASSWORD }}
-          password: 123456789 # ${{ secrets.FTP_USER_NAME }}
+          server: ${{ secrets.FTP_SERVER_NAME }}
+          username: ${{ secrets.FTP_USER_NAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
