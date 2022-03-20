@@ -33,3 +33,4 @@ jobs:
           local-dir: ./docs/
           security: loose
           log-level: verbose
+          protocol: ftps
