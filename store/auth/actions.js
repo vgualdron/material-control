@@ -1,4 +1,4 @@
-import authApi from '@/api/auth/authApi';
+import authApi from '~/api/auth/AuthApi';
 import { typesCommon } from '@/store/common/typesCommon';
 import { typesAuth as types } from './types';
 const actions = {
