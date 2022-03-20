@@ -29,4 +29,8 @@ export default class UserApi {
   async edit (data) {
     return await axios.put(`${envConfig.urlApi}/${endpoints.primary}/${data.id}`, data, { headers: AuthHeader() });
   }
+
+  async updateProfile (data) {
+    return await axios.patch(`${envConfig.urlApi}/${endpoints.primary}/${endpoints.profile}/${data.id}`, data, { headers: AuthHeader() });
+  }
 }

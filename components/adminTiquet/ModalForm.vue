@@ -286,10 +286,9 @@
             <b-form-input
               id="feedback-ash-percentage"
               v-model="ash_percentage"
-              min="0.0"
-              type="number"
+              maxLenght="4"
+              type="text"
               :disabled="disabledElements"
-              step="0.01"
               :formatter="formatDecimal"
             >
             </b-form-input>
@@ -303,10 +302,9 @@
             <b-form-input
               id="feedback-gross-weight"
               v-model="gross_weight"
-              min="0.0"
-              type="number"
+              type="text"
               :disabled="disabledElements"
-              step="0.01"
+              maxlength="15"
               :formatter="formatDecimal"
             >
             </b-form-input>
@@ -319,7 +317,8 @@
             <b-form-input
               id="feedback-tare-weight"
               v-model="tare_weight"
-              type="number"
+              type="text"
+              maxlength="15"
               :disabled="disabledElements"
               :formatter="formatDecimal"
             >
@@ -333,8 +332,8 @@
             <b-form-input
               id="feedback-net-weight"
               v-model="net_weight"
-              type="number"
-              :disabled=true
+              type="text"
+              :disabled="true"
             >
             </b-form-input>
             <b-form-invalid-feedback :state="stateNetWeight">
@@ -430,9 +429,9 @@ export default {
         { value: 'D', text: 'Despacho' },
         { value: 'R', text: 'Recepción' },
         { value: 'C', text: 'Compra' },
-        { value: 'V', text: 'Venta' },
+        { value: 'V', text: 'Venta' }/* ,
         { value: 'OC', text: 'Operación con Cliente' },
-        { value: 'OP', text: 'Operación con Proveedor' }
+        { value: 'OP', text: 'Operación con Proveedor' } */
       ],
       mark_entry: false,
       type: 'D',
@@ -501,8 +500,8 @@ export default {
         this.driver_name = val.driver_name;
         this.license_plate = val.license_plate;
         this.trailer_number = val.trailer_number;
-        this.gross_weight = val.gross_weight;
-        this.tare_weight = val.tare_weight;
+        this.gross_weight = this.formatDecimal(val.gross_weight);
+        this.tare_weight = this.formatDecimal(val.tare_weight);
         this.seals = val.seals && val.seals.length > 0 ? val.seals.split(',') : [];
         this.supplier = val.supplier ? parseInt(val.supplier) : null;
         this.customer = val.customer ? parseInt(val.customer) : null;
@@ -536,7 +535,10 @@ export default {
       'dataSession'
     ]),
     net_weight () {
-      return (((this.gross_weight ?? 0) - (this.tare_weight ?? 0)).toFixed(2));
+      const localeGrossWeight = this.gross_weight === null || this.gross_weight === '' ? 0 : parseFloat(this.gross_weight.toString().replace(/,/g, ''));
+      const localeTareWeight = this.tare_weight === null || this.tare_weight === '' ? 0 : parseFloat(this.tare_weight.toString().replace(/,/g, ''));
+      const netWeight = (localeGrossWeight - localeTareWeight) > 0 ? (localeGrossWeight - localeTareWeight) : 0;
+      return this.formatDecimal(netWeight);
     },
     showReceiptNumber () {
       return this.type === 'C' || this.type === 'R' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D');
@@ -589,20 +591,23 @@ export default {
       }
       return true;
     },
-    stateGrossWeight () {
-      if (!this.gross_weight || this.gross_weight === '' || this.gross_weight <= 0) {
+    stateTareWeight () {
+      const tareWeight = this.tare_weight === '' || this.tare_weight === null ? this.tare_weight : this.tare_weight.toString().replace(/,/g, '');
+      if (!tareWeight || tareWeight === '' || parseFloat(tareWeight) <= 0) {
         return false;
       }
       return true;
     },
-    stateTareWeight () {
-      if (!this.tare_weight || this.tare_weight === '' || this.tare_weight <= 0) {
+    stateGrossWeight () {
+      const grossWeight = this.gross_weight === '' || this.gross_weight === null ? this.gross_weight : this.gross_weight.toString().replace(/,/g, '');
+      if (!grossWeight || grossWeight === '' || parseFloat(grossWeight) <= 0) {
         return false;
       }
       return true;
     },
     stateNetWeight () {
-      if (!this.net_weight || this.net_weight === '' || this.net_weight <= 0) {
+      const netWeight = this.net_weight === '' || this.net_weight === null ? this.net_weight : this.net_weight.toString().replace(/,/g, '');
+      if (!netWeight || netWeight === '' || parseFloat(netWeight) <= 0) {
         return false;
       }
       return true;
@@ -722,22 +727,22 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
-          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage : 0,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.replace(/,/g, '') : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
-          conveyor_company_name: this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.name)[0],
+          conveyor_company_name: this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.nit)[0] + '/' + this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.name)[0],
           driver_document: this.driver_document,
           driver_name: this.driver_name,
           license_plate: this.license_plate,
           trailer_number: this.trailer_number,
-          gross_weight: this.gross_weight,
-          tare_weight: this.tare_weight,
-          net_weight: this.net_weight,
+          gross_weight: this.gross_weight.replace(/,/g, ''),
+          tare_weight: this.tare_weight.replace(/,/g, ''),
+          net_weight: this.net_weight.replace(/,/g, ''),
           supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : null,
-          supplier_name: this.type === 'C' || this.type === 'OP' ? this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.name)[0] : null,
+          supplier_name: this.type === 'C' || this.type === 'OP' ? (this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.nit)[0] + '/' + this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.name)[0]) : null,
           customer: this.type === 'V' || this.type === 'OC' ? this.customer : null,
-          customer_name: this.type === 'V' || this.type === 'OC' ? this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0] : null,
+          customer_name: this.type === 'V' || this.type === 'OC' ? (this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.nit)[0] + '/' + this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0]) : null,
           seals: this.seals.join(','),
           observation: this.observation,
           round_trip: this.round_trip && (this.type === 'D' || this.type === 'R') ? 1 : 0,
@@ -754,22 +759,22 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
-          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage : 0,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.replace(/,/g, '') : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
-          conveyor_company_name: this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.name)[0],
+          conveyor_company_name: this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.nit)[0] + '/' + this.localeConveyorThirds?.data?.filter(item => item.id === this.conveyor_company).map(item => item.name)[0],
           driver_document: this.driver_document,
           driver_name: this.driver_name,
           license_plate: this.license_plate,
           trailer_number: this.trailer_number,
-          gross_weight: this.gross_weight,
-          tare_weight: this.tare_weight,
-          net_weight: this.net_weight,
+          gross_weight: this.gross_weight.replace(/,/g, ''),
+          tare_weight: this.tare_weight.replace(/,/g, ''),
+          net_weight: this.net_weight.replace(/,/g, ''),
           supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : null,
-          supplier_name: this.type === 'C' || this.type === 'OP' ? this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.name)[0] : null,
+          supplier_name: this.type === 'C' || this.type === 'OP' ? (this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.nit)[0] + '/' + this.localeSupplierThirds?.data?.filter(item => item.id === this.supplier).map(item => item.name)[0]) : null,
           customer: this.type === 'V' || this.type === 'OC' ? this.customer : null,
-          customer_name: this.type === 'V' || this.type === 'OC' ? this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0] : null,
+          customer_name: this.type === 'V' || this.type === 'OC' ? (this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.nit)[0] + '/' + this.localeCustomerThirds?.data?.filter(item => item.id === this.customer).map(item => item.name)[0]) : null,
           seals: this.seals.join(','),
           observation: this.observation,
           round_trip: this.round_trip && (this.type === 'D' || this.type === 'R') ? 1 : 0
@@ -828,8 +833,23 @@ export default {
       this.seals = this.seals.length > 0 ? this.seals.join(',').toUpperCase().split(',') : [];
     },
     formatDecimal (value) {
-      value = value && value !== '' ? parseFloat(value) : null;
-      return value && value !== '' ? parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]) : 0;
+      if (value === '.' || value === '0.') {
+        return '0.';
+      } else {
+        value = value === null || value.toString().trim() === '' || value.toString().trim() === '-' ? 0 : value;
+        value = value.toString().replace(/[^0-9.-]/g, '');
+        value = value.toString();
+        if (value === null || value === '' || parseFloat(value) === 0) {
+          return 0;
+        } else {
+          value = value.substring(0, 2) === '0.' ? value : value.replace(/^0+/, '');
+          value = value.replace(/[^0-9.-]/g, '');
+          value = parseFloat(value) < 0 ? (parseFloat(value) * -1) : value;
+          value = value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+          value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+          return value;
+        }
+      }
     },
     closeModal () {
       this.setTypeAction('');

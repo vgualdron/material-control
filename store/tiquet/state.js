@@ -4,6 +4,6 @@ const state = {
   tiquet: null,
   showModalForm: false,
   statusTiquet: false,
-  typeAction: 'create'
+  typeAction: ''
 };
 export default state;

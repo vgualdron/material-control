@@ -143,7 +143,7 @@
               v-if="originYards && originYards.data"
               :filterable="false"
               id="feedback-origin-yard"
-              :disabled="disabledElements"
+              :disabled="disabledElements || disableOriginYard"
               v-model="origin_yard"
               :options="originYards.data"
               label="name"
@@ -162,7 +162,7 @@
               v-if="destinyYards && destinyYards.data"
               :filterable="false"
               id="feedback-destiny-yard"
-              :disabled="disabledElements"
+              :disabled="disabledElements || disableDestinyYard"
               required
               v-model="destiny_yard"
               :options="destinyYards.data"
@@ -297,11 +297,10 @@
             <b-form-input
               id="feedback-ash-percentage"
               v-model="ash_percentage"
-              min="0.0"
-              type="number"
+              type="text"
               :disabled="disabledElements"
-              step="0.01"
               :formatter="formatDecimal"
+              maxlength="4"
             >
             </b-form-input>
           </b-col>
@@ -314,11 +313,10 @@
             <b-form-input
               id="feedback-gross-weight"
               v-model="gross_weight"
-              min="0.0"
-              type="number"
+              type="text"
               :disabled="disabledElements"
-              step="0.01"
               :formatter="formatDecimal"
+              maxlength="15"
             >
             </b-form-input>
             <b-form-invalid-feedback :state="stateGrossWeight">
@@ -330,9 +328,10 @@
             <b-form-input
               id="feedback-tare-weight"
               v-model="tare_weight"
-              type="number"
+              type="text"
               :disabled="disabledElements"
               :formatter="formatDecimal"
+              maxlength="15"
             >
             </b-form-input>
             <b-form-invalid-feedback :state="stateTareWeight">
@@ -344,8 +343,9 @@
             <b-form-input
               id="feedback-net-weight"
               v-model="net_weight"
-              type="number"
-              :disabled=true
+              type="text"
+              :disabled="true"
+              maxlength="20"
             >
             </b-form-input>
             <b-form-invalid-feedback :state="stateNetWeight">
@@ -444,9 +444,9 @@ export default {
         { value: 'D', text: 'Despacho' },
         { value: 'R', text: 'Recepción' },
         { value: 'C', text: 'Compra' },
-        { value: 'V', text: 'Venta' },
+        { value: 'V', text: 'Venta' }/* ,
         { value: 'OC', text: 'Operación con Cliente' },
-        { value: 'OP', text: 'Operación con Proveedor' }
+        { value: 'OP', text: 'Operación con Proveedor' } */
       ],
       mark_entry: false,
       type: 'D',
@@ -515,13 +515,31 @@ export default {
         this.driver_name = val.driver_name;
         this.license_plate = val.license_plate;
         this.trailer_number = val.trailer_number;
-        this.gross_weight = val.gross_weight;
-        this.tare_weight = val.tare_weight;
+        this.gross_weight = this.formatDecimal(val.gross_weight);
+        this.tare_weight = this.formatDecimal(val.tare_weight);
         this.seals = val.seals && val.seals.length > 0 ? val.seals.split(',') : [];
         this.supplier = val.supplier ? parseInt(val.supplier) : null;
         this.customer = val.customer ? parseInt(val.customer) : null;
         this.observation = val.observation;
         this.round_trip = parseInt(val.round_trip) === 1;
+      }
+    },
+    type (val) {
+      if (val === 'D' || val === 'V' || ((val === 'OC' || val === 'OP') && this.operation === 'P')) {
+        this.destiny_yard = null;
+        this.origin_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+      } else if (val === 'R' || val === 'C' || ((val === 'OC' || val === 'OP') && this.operation === 'D')) {
+        this.origin_yard = null;
+        this.destiny_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+      }
+    },
+    operation (val) {
+      if ((this.type === 'OC' || this.type === 'OP') && val === 'P') {
+        this.destiny_yard = null;
+        this.origin_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+      } else if ((this.type === 'OC' || this.type === 'OP') && val === 'D') {
+        this.origin_yard = null;
+        this.destiny_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
       }
     }
   },
@@ -550,7 +568,10 @@ export default {
       'dataSession'
     ]),
     net_weight () {
-      return (((this.gross_weight ?? 0) - (this.tare_weight ?? 0)).toFixed(2));
+      const localeGrossWeight = this.gross_weight === null || this.gross_weight === '' ? 0 : parseFloat(this.gross_weight.toString().replace(/,/g, ''));
+      const localeTareWeight = this.tare_weight === null || this.tare_weight === '' ? 0 : parseFloat(this.tare_weight.toString().replace(/,/g, ''));
+      const netWeight = (localeGrossWeight - localeTareWeight) > 0 ? (localeGrossWeight - localeTareWeight) : 0;
+      return this.formatDecimal(netWeight);
     },
     showReceiptNumber () {
       return this.type === 'C' || this.type === 'R' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D');
@@ -604,19 +625,22 @@ export default {
       return true;
     },
     stateGrossWeight () {
-      if (!this.gross_weight || this.gross_weight === '' || this.gross_weight <= 0) {
+      const grossWeight = this.gross_weight === '' || this.gross_weight === null ? this.gross_weight : this.gross_weight.toString().replace(/,/g, '');
+      if (!grossWeight || grossWeight === '' || parseFloat(grossWeight) <= 0) {
         return false;
       }
       return true;
     },
     stateTareWeight () {
-      if (!this.tare_weight || this.tare_weight === '' || this.tare_weight <= 0) {
+      const tareWeight = this.tare_weight === '' || this.tare_weight === null ? this.tare_weight : this.tare_weight.toString().replace(/,/g, '');
+      if (!tareWeight || tareWeight === '' || parseFloat(tareWeight) <= 0) {
         return false;
       }
       return true;
     },
     stateNetWeight () {
-      if (!this.net_weight || this.net_weight === '' || this.net_weight <= 0) {
+      const netWeight = this.net_weight === '' || this.net_weight === null ? this.net_weight : this.net_weight.toString().replace(/,/g, '');
+      if (!netWeight || netWeight === '' || parseFloat(netWeight) <= 0) {
         return false;
       }
       return true;
@@ -674,6 +698,12 @@ export default {
     },
     renderDestinyYard () {
       return this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D');
+    },
+    disableOriginYard () {
+      return this.dataSession.yard !== null && this.dataSession.yard !== '' && (this.type === 'D' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P'));
+    },
+    disableDestinyYard () {
+      return this.dataSession.yard !== null && this.dataSession.yard !== '' && (this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D'));
     }
   },
   mounted () {
@@ -718,7 +748,7 @@ export default {
       this.time = arrayTime[0] + ':' + arrayTime[1];
       this.material = null;
       this.ash_percentage = 0;
-      this.origin_yard = '';
+      this.origin_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
       this.destiny_yard = '';
       this.conveyor_company = null;
       this.driver_document = '';
@@ -744,7 +774,7 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
-          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage : 0,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.replace(/,/g, '') : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
@@ -752,9 +782,9 @@ export default {
           driver_name: this.driver_name,
           license_plate: this.license_plate,
           trailer_number: this.trailer_number,
-          gross_weight: this.gross_weight,
-          tare_weight: this.tare_weight,
-          net_weight: this.net_weight,
+          gross_weight: this.gross_weight.replace(/,/g, ''),
+          tare_weight: this.tare_weight.replace(/,/g, ''),
+          net_weight: this.net_weight.replace(/,/g, ''),
           supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : null,
           customer: this.type === 'V' || this.type === 'OC' ? this.customer : null,
           seals: this.seals.join(','),
@@ -773,7 +803,7 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
-          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage : 0,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.replace(/,/g, '') : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
@@ -781,9 +811,9 @@ export default {
           driver_name: this.driver_name,
           license_plate: this.license_plate,
           trailer_number: this.trailer_number,
-          gross_weight: this.gross_weight,
-          tare_weight: this.tare_weight,
-          net_weight: this.net_weight,
+          gross_weight: this.gross_weight.replace(/,/g, ''),
+          tare_weight: this.tare_weight.replace(/,/g, ''),
+          net_weight: this.net_weight.replace(/,/g, ''),
           supplier: this.type === 'C' || this.type === 'OP' ? this.supplier : null,
           customer: this.type === 'V' || this.type === 'OC' ? this.customer : null,
           seals: this.seals.join(','),
@@ -850,8 +880,23 @@ export default {
       this.seals = this.seals.length > 0 ? this.seals.join(',').toUpperCase().split(',') : [];
     },
     formatDecimal (value) {
-      value = value && value !== '' ? parseFloat(value) : null;
-      return value && value !== '' ? parseFloat(value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]) : 0;
+      if (value === '.' || value === '0.') {
+        return '0.';
+      } else {
+        value = value === null || value.toString().trim() === '' || value.toString().trim() === '-' ? 0 : value;
+        value = value.toString().replace(/[^0-9.-]/g, '');
+        value = value.toString();
+        if (value === null || value === '' || parseFloat(value) === 0) {
+          return 0;
+        } else {
+          value = value.substring(0, 2) === '0.' ? value : value.replace(/^0+/, '');
+          value = value.replace(/[^0-9.-]/g, '');
+          value = parseFloat(value) < 0 ? (parseFloat(value) * -1) : value;
+          value = value.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
+          value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+          return value;
+        }
+      }
     },
     closeModal () {
       this.setTypeAction('');

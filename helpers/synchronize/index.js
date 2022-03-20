@@ -74,7 +74,7 @@ async function setDataToLocale (data) {
           );
           tx.executeSql('CREATE TABLE third (' +
             'id integer PRIMARY KEY,' +
-            'nit int(20) NOT NULL,' +
+            'nit varchar(30) NOT NULL,' +
             'name varchar(255) NOT NULL,' +
             'customer id(1) NOT NULL,' +
             'associated id(1) NOT NULL,' +
@@ -348,7 +348,7 @@ async function getNotSynchronizedTiquets () {
             );
             tx.executeSql('CREATE TABLE IF NOT EXISTS third (' +
               'id integer PRIMARY KEY,' +
-              'nit int(20) NOT NULL,' +
+              'nit varchar(30) NOT NULL,' +
               'name varchar(255) NOT NULL,' +
               'customer id(1) NOT NULL,' +
               'associated id(1) NOT NULL,' +

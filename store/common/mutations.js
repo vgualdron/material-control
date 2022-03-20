@@ -19,6 +19,9 @@ const mutations = {
   },
   [types.mutations.SET_TOAST] (state, payload) {
     state.toast = payload;
+  },
+  [types.mutations.SET_SHOW_PROFILE] (state, payload) {
+    state.showProfile = payload;
   }
 };
 export default mutations;

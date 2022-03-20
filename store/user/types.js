@@ -16,7 +16,8 @@ export const typesUser = {
     SET_TYPE_ACTION: '@actions/setTypeAction',
     SAVE: '@actions/save',
     DELETE: '@actions/delete',
-    EDIT: '@actions/edit'
+    EDIT: '@actions/edit',
+    UPDATE_PROFILE: '@actions/updateProfile'
   }
 };
 

@@ -35,20 +35,26 @@
         show-empty
         small
       >
-
         <template #cell(rTrip)="row">
-          <b-form-checkbox :checked="row.item.roundTrip === '1' ? true : false" disabled>
-          </b-form-checkbox>
+          <b-form-checkbox
+            :checked="row.item.roundTrip === '1' ? true : false"
+            disabled
+          />
         </template>
         <template #cell(actions)="row">
           <b-button v-if="row.item.showEdit" size="sm" @click="showModal(row.item, 'edit')" class="mr-1" title="Editar">
             <b-icon-pencil-fill></b-icon-pencil-fill>
           </b-button>
-          <b-button v-if="row.item.showDelete" size="sm" @click="showModal(row.item, 'delete')" class="mr-1" title="Eliminar">
+          <b-button
+            v-if="row.item.showDelete"
+            size="sm"
+            title="Eliminar"
+            class="mr-1"
+            @click="showModal(row.item, 'delete')"
+            >
             <b-icon-trash-fill></b-icon-trash-fill>
           </b-button>
         </template>
-
         <template #row-details="row">
           <b-card>
             <ul>
@@ -73,7 +79,7 @@
             class="my-0"
             pills
             @input="search"
-          ></b-pagination>
+          />
         </b-col>
         <b-col sm="3" md="3" class="my-1" style="display: inline-block;">
           <b-form-group
@@ -92,7 +98,7 @@
               :options="pageOptions"
               size="sm"
               @change="search"
-            ></b-form-select>
+            />
           </b-form-group>
         </b-col>
       </b-row>
@@ -120,12 +126,11 @@ export default {
     return {
       view: 'rate',
       fields: [
-        { key: 'type', label: 'Tipo', sortable: true, class: 'text-center' },
         { key: 'movement', label: 'Movimiento', sortable: true, class: 'text-center' },
-        { key: 'originYardName', label: 'Patio origen', sortable: true, class: 'text-center' },
-        { key: 'destinyYardName', label: 'Patio destino', sortable: true, class: 'text-center' },
-        { key: 'customerOrSupplier', label: 'Cliente/Proveedor', sortable: true, class: 'text-center' },
+        { key: 'originYardOrSupplierName', label: 'Patio origen/Proveedor', sortable: true, class: 'text-center' },
+        { key: 'destinyYardOrCustomerName', label: 'Patio destino/Cliente', sortable: true, class: 'text-center' },
         { key: 'conveyorCompanyName', label: 'Emp. Transportadora', sortable: true, class: 'text-center' },
+        { key: 'materialName', label: 'Material', sortable: true, class: 'text-center' },
         { key: 'startDate', label: 'Fecha Inicial', sortable: true, class: 'text-center' },
         { key: 'finalDate', label: 'Fecha Final', sortable: true, class: 'text-center' },
         { key: 'rTrip', label: 'Viaje Redondo', sortable: true, class: 'text-center' },
@@ -203,10 +208,10 @@ export default {
       let originYard = null;
       await this.setTypeAction(action);
       if (action !== 'create') {
-        await this.setRate({ ...item });
         material = item.material;
-        destinyYard = item.destiny_yard;
-        originYard = item.origin_yard;
+        destinyYard = item.destinyYard;
+        originYard = item.originYard;
+        await this.setRate({ ...item });
       }
       await this.searchMaterials(material);
       await this.searchOriginYards(originYard);

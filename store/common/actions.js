@@ -10,6 +10,9 @@ const actions = {
   [types.actions.SET_LOADER_STATUS] ({ commit }, data) {
     commit(types.mutations.SET_LOADER_STATUS, data);
   },
+  [types.actions.SET_SHOW_PROFILE] ({ commit }, data) {
+    commit(types.mutations.SET_SHOW_PROFILE, data);
+  },
   [types.actions.SET_USER] ({ commit }, data) {
     localStorage.setItem('user', JSON.stringify(data));
   },

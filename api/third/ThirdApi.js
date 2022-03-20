@@ -8,7 +8,7 @@ const envConfig = environmentConfig[env];
 export default class ThirdApi {
   async getByType (data) {
     return await axios.get(
-      `${envConfig.urlApi}/${endpoints.primary}/${data.type}`,
+      `${envConfig.urlApi}/${endpoints.primary}/${data.type}/${encodeURIComponent(data?.start_date ? data.start_date : ' ')}/${encodeURIComponent(data?.final_date ? data.final_date : ' ')}`,
       {
         headers: AuthHeader()
       }

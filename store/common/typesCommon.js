@@ -10,7 +10,8 @@ export const typesCommon = {
     SET_USER_PERMISIONS: '@mutations/setUserPermisions',
     SET_USER_PERMISIONS_GROUP: '@mutations/setUserPermisionsGroup',
     SET_PERMISSIONS_GROUP: '@mutations/setPermissionsGroup',
-    SET_TOAST: '@mutations/setToast'
+    SET_TOAST: '@mutations/setToast',
+    SET_SHOW_PROFILE: '@mutations/setShowProfile'
   },
   actions: {
     SET_ROUTER_ACTIVE: '@actions/setRouterActive',
@@ -23,7 +24,8 @@ export const typesCommon = {
     SET_USER_PERMISIONS_GROUP: '@actions/setUserPermisionsGroup',
     GET_PERMISSIONS_GROUP: '@actions/getPermissionsGroup',
     SET_PERMISSIONS_GROUP: '@actions/setPermissionsGroup',
-    SET_TOAST: '@actions/setToast'
+    SET_TOAST: '@actions/setToast',
+    SET_SHOW_PROFILE: '@actions/setShowProfile'
   }
 };
 

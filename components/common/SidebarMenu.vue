@@ -8,26 +8,46 @@
       title="Funcionalidades"
       backdrop
       left
-      shadow>
+      shadow
+    >
       <div class="px-3 py-2">
-        <b-img src="~/assets/images/logo-banner.png" fluid thumbnail>
-        </b-img>
+        <b-img
+          src="~/assets/images/logo-banner.png"
+          fluid
+          thumbnail
+        />
         <nav class="mb-3 mt-3">
           <b-nav vertical>
-            <b-nav-item :class="routerActive === '/' ? 'active' : ''" @click="go('/')">{{ toCapitalCaseText($t('home')) }}</b-nav-item>
+            <b-nav-item
+              :class="routerActive === '/' ? 'active' : ''"
+              @click="go('/')"
+            >
+              {{ toCapitalCaseText($t('home')) }}
+            </b-nav-item>
             <b-nav-item
               v-for="(permision, index) in userPermisions"
+              :key="'nav-item' + index"
               :class="routerActive === permision.name ? 'active' : ''"
               @click="go(permision.name)"
-              :key="'nav-item' + index">
+            >
               {{ toCapitalCaseText($t(permision.name)) }}
             </b-nav-item>
-            <b-nav-item @click="close('/login')">{{ toCapitalCaseText($t('logout')) }}</b-nav-item>
+            <b-nav-item
+              @click="setShowProfile(true)"
+            >
+              {{ toCapitalCaseText($t('updateProfile')) }}
+            </b-nav-item>
+            <b-nav-item
+              @click="close('/login')"
+            >
+              {{ toCapitalCaseText($t('logout')) }}
+            </b-nav-item>
           </b-nav>
         </nav>
       </div>
     </b-sidebar>
     <BannerMenu :show-btn="true" />
+    <UpdateProfile />
   </div>
 </template>
 
@@ -36,14 +56,16 @@ import { mapState, mapActions } from 'vuex';
 import { typesCommon } from '@/store/common/typesCommon';
 import { typesAuth } from '@/store/auth/types';
 import BannerMenu from '@/components/common/BannerMenu.vue';
+import UpdateProfile from '@/components/common/UpdateProfile.vue';
 import { toCapitalCase } from '@/helpers/common/string';
 export default {
+  components: {
+    BannerMenu,
+    UpdateProfile
+  },
   data () {
     return {
     };
-  },
-  components: {
-    BannerMenu
   },
   computed: {
     ...mapState(typesCommon.PATH, [
@@ -59,7 +81,8 @@ export default {
     ...mapActions(typesCommon.PATH, {
       setRouterActive: typesCommon.actions.SET_ROUTER_ACTIVE,
       getUserPermisions: typesCommon.actions.GET_USER_PERMISIONS,
-      getUserPermisionsGroup: typesCommon.actions.GET_USER_PERMISIONS_GROUP
+      getUserPermisionsGroup: typesCommon.actions.GET_USER_PERMISIONS_GROUP,
+      setShowProfile: typesCommon.actions.SET_SHOW_PROFILE
     }),
     ...mapActions(typesAuth.PATH, {
       setAuthorizationToken: typesAuth.actions.SET_AUTHORIZATION_TOKEN,
