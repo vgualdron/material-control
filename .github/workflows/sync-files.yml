@@ -1,6 +1,6 @@
 name: Sync files
 on: 
-  push:
+  commit:
     branches:
       - gh-pages
 jobs:
