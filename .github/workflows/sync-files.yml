@@ -1,7 +1,7 @@
 name: Sync files
 on: 
   workflow_run:
-    workflows: [Build]
+    workflows: [pages-build-deployment]
     types: [completed]
     branches: [gh-pages]
 jobs:
