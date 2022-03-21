@@ -27,6 +27,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           security: loose
           log-level: verbose
-          protocol: ftps
+          protocol: ftp
           local-dir: ./docs/
           state-name: .sync-state-v2.json
