@@ -29,4 +29,4 @@ jobs:
           log-level: verbose
           protocol: ftps
           local-dir: ./docs/
-          state-name: .sync-state.json
+          state-name: .sync-state.json 
