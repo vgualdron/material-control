@@ -28,5 +28,4 @@ jobs:
           security: loose
           log-level: verbose
           protocol: ftps
-          dangerous-clean-slate: true
           local-dir: ./docs/
