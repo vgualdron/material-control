@@ -29,3 +29,4 @@ jobs:
           log-level: verbose
           protocol: ftps
           local-dir: ./docs/
+          state-name: ./material-control/.ftp-deploy-sync-state.json
