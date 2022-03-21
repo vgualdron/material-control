@@ -5,7 +5,7 @@
       <b-col></b-col>
       <b-col cols="8" md="auto">
         <b-card
-          header="Iniciar sesión"
+          header="Funciona el CI/CD Iniciar sesión"
           header-tag="header"
           class="mt-3"
         >
