@@ -4,10 +4,10 @@
       <h3 class="subtitle is-6 has-text-grey">
         {{ $t('home') }}
         <a v-if="$nuxt.isOffline" href="#">
-          IS OFFLINE
+          IS OFFLINE xxx
         </a>
         <a v-else href="#">
-          IS ONLINE
+          IS ONLINE xxx
         </a>
       </h3>
       <div class="columns is-mobile">
