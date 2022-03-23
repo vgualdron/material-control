@@ -5,7 +5,7 @@
       <b-col></b-col>
       <b-col cols="8" md="auto">
         <b-card
-          header="xxxxxx Iniciar sesión"
+          header="Iniciar sesión"
           header-tag="header"
           class="mt-3"
         >
