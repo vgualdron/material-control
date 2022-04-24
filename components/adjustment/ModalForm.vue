@@ -12,16 +12,6 @@
     </template>
     <b-form
       @submit="handleForm">
-      <b-form-group class="mb-1" v-if="date !== null && date !== ''">
-        <label for="feedback-date" class='mb-0'>Fecha</label>
-        <b-form-input
-          id="feedback-date"
-          v-model="date"
-          type="text"
-          :disabled="true"
-        >
-        </b-form-input>
-      </b-form-group>
       <b-form-group class="mb-1">
         <label for="feedback-type" class='mb-0'>Tipo</label>
         <b-form-select
@@ -89,6 +79,19 @@
         </b-form-invalid-feedback>
       </b-form-group>
       <b-form-group>
+        <label for="feedback-date">Fecha</label>
+        <b-form-datepicker
+          id="feedback-date"
+          v-model="date"
+          placeholder="Seleccione la Fecha"
+          :disabled="disabledElements"
+        >
+        </b-form-datepicker>
+          <b-form-invalid-feedback :state="stateDate">
+            {{ labelTextFieldRequired }}
+          </b-form-invalid-feedback>
+        </b-form-group>
+      <b-form-group>
         <label for="feedbackobservation">Observaciones</label>
         <b-form-textarea
           id="feedbackobservation"
@@ -106,7 +109,7 @@
         href="#"
         variant="primary"
         class="form-control"
-        :disabled="false"
+        :disabled="disableButton"
         @click="handleForm">
         {{ textBtnSubmit }}
       </b-button>
@@ -128,12 +131,12 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import { BIconX } from 'bootstrap-vue';
 import { typesAdjustment as types } from '@/store/adjustment/types';
 import { typesYard } from '@/store/yard/types';
 import { typesAuth } from '@/store/auth/types';
 import { typesMaterial } from '@/store/material/types';
 import { typesThird } from '@/store/third/types';
-import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
   data () {
@@ -230,6 +233,18 @@ export default {
         return false;
       }
       return true;
+    },
+    stateDate () {
+      if (!this.date || this.date === '' || parseFloat(this.date) === 0) {
+        return false;
+      }
+      return true;
+    },
+    disableButton () {
+      if (!this.stateType || !this.stateYard || !this.stateMaterial || !this.stateAmount || !this.stateDate) {
+        return true;
+      }
+      return false;
     }
   },
   methods: {
@@ -266,6 +281,7 @@ export default {
           type: this.type,
           yard: this.yard,
           material: this.material,
+          date: this.date,
           amount: this.amount.replace(/,/g, ''),
           observation: this.observation
         });
@@ -277,6 +293,7 @@ export default {
           yard: this.yard,
           material: this.material,
           amount: this.amount.replace(/,/g, ''),
+          date: this.date,
           observation: this.observation
         });
       }

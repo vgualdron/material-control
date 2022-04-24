@@ -50,6 +50,7 @@
         </b-form-row>
       </b-form-group>
       <b-button :disabled="stateFilterDisabled" @click="search">Filtrar</b-button>
+      <b-button v-if="showAdmin" @click="setRouterActive('adminFreightSettlement')">Liquidaciones</b-button>
     <!-- Main table element -->
     <template v-if="showList">
       <b-table
@@ -309,12 +310,18 @@ export default {
         }
       });
       return disabled;
+    },
+    showAdmin () {
+      return existInArray('adminFreightSettlement.get', this.userPermisionsGroup);
     }
   },
   created () {
     this.searchConveyorThirds();
   },
   methods: {
+    ...mapActions(typesCommon.PATH, {
+      setRouterActive: typesCommon.actions.SET_ROUTER_ACTIVE
+    }),
     ...mapActions(types.PATH, {
       getFreightSettlements: types.actions.GET_FREIGHT_SETTLEMENTS,
       settle: types.actions.SAVE,

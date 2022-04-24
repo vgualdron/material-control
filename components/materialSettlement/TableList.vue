@@ -105,6 +105,7 @@
         </b-form-row>
       </b-form-group>
       <b-button :disabled="stateFilterDisabled" @click="search" class="mt-2 mb-2">Filtrar</b-button>
+      <b-button v-if="showAdmin" @click="setRouterActive('adminMaterialSettlement')">Liquidaciones</b-button>
     <!-- Main table element -->
     <template v-if="showList">
       <b-table
@@ -404,6 +405,9 @@ export default {
         }
       });
       return disabled;
+    },
+    showAdmin () {
+      return existInArray('adminMaterialSettlement.get', this.userPermisionsGroup);
     }
   },
   created () {
@@ -415,6 +419,9 @@ export default {
       getMaterialSettlements: types.actions.GET_MATERIAL_SETTLEMENTS,
       settle: types.actions.SAVE,
       print: types.actions.PRINT
+    }),
+    ...mapActions(typesCommon.PATH, {
+      setRouterActive: typesCommon.actions.SET_ROUTER_ACTIVE
     }),
     ...mapActions(typesThird.PATH, {
       getSupplierThirds: typesThird.actions.GET_SUPPLIER_THIRDS,

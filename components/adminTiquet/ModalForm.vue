@@ -406,12 +406,12 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import { BIconX } from 'bootstrap-vue';
 import { typesAdminTiquet as types } from '@/store/adminTiquet/types';
 import { typesYard } from '@/store/yard/types';
 import { typesAuth } from '@/store/auth/types';
 import { typesMaterial } from '@/store/material/types';
 import { typesThird } from '@/store/third/types';
-import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
   data () {
@@ -537,7 +537,7 @@ export default {
     net_weight () {
       const localeGrossWeight = this.gross_weight === null || this.gross_weight === '' ? 0 : parseFloat(this.gross_weight.toString().replace(/,/g, ''));
       const localeTareWeight = this.tare_weight === null || this.tare_weight === '' ? 0 : parseFloat(this.tare_weight.toString().replace(/,/g, ''));
-      const netWeight = (localeGrossWeight - localeTareWeight) > 0 ? (localeGrossWeight - localeTareWeight) : 0;
+      const netWeight = parseFloat((localeGrossWeight - localeTareWeight) > 0 ? (localeGrossWeight - localeTareWeight) : 0).toFixed(2);
       return this.formatDecimal(netWeight);
     },
     showReceiptNumber () {
@@ -727,7 +727,7 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
-          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.replace(/,/g, '') : 0,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.toString().replace(/,/g, '') : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
@@ -759,7 +759,7 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
-          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.replace(/,/g, '') : 0,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.toString().replace(/,/g, '') : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,

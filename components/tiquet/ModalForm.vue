@@ -421,12 +421,12 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import { BIconX } from 'bootstrap-vue';
 import { typesTiquet as types } from '@/store/tiquet/types';
 import { typesYard } from '@/store/yard/types';
 import { typesAuth } from '@/store/auth/types';
 import { typesMaterial } from '@/store/material/types';
 import { typesThird } from '@/store/third/types';
-import { BIconX } from 'bootstrap-vue';
 export default {
   name: 'modal-form',
   data () {
@@ -525,21 +525,25 @@ export default {
       }
     },
     type (val) {
-      if (val === 'D' || val === 'V' || ((val === 'OC' || val === 'OP') && this.operation === 'P')) {
-        this.destiny_yard = null;
-        this.origin_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
-      } else if (val === 'R' || val === 'C' || ((val === 'OC' || val === 'OP') && this.operation === 'D')) {
-        this.origin_yard = null;
-        this.destiny_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+      if (this.dataSession && this.dataSession.yard !== null && this.typeAction !== 'edit' && this.typeAction !== 'delete') {
+        if ((val === 'D' || val === 'V' || ((val === 'OC' || val === 'OP') && this.operation === 'P'))) {
+          this.destiny_yard = null;
+          this.origin_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+        } else if (val === 'R' || val === 'C' || ((val === 'OC' || val === 'OP') && this.operation === 'D')) {
+          this.origin_yard = null;
+          this.destiny_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+        }
       }
     },
     operation (val) {
-      if ((this.type === 'OC' || this.type === 'OP') && val === 'P') {
-        this.destiny_yard = null;
-        this.origin_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
-      } else if ((this.type === 'OC' || this.type === 'OP') && val === 'D') {
-        this.origin_yard = null;
-        this.destiny_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+      if (this.dataSession && this.dataSession.yard !== null && this.typeAction !== 'edit' && this.typeAction !== 'delete') {
+        if ((this.type === 'OC' || this.type === 'OP') && val === 'P') {
+          this.destiny_yard = null;
+          this.origin_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+        } else if ((this.type === 'OC' || this.type === 'OP') && val === 'D') {
+          this.origin_yard = null;
+          this.destiny_yard = this.dataSession.yard !== null && this.dataSession.yard !== '' ? parseInt(this.dataSession.yard) : null;
+        }
       }
     }
   },
@@ -570,7 +574,7 @@ export default {
     net_weight () {
       const localeGrossWeight = this.gross_weight === null || this.gross_weight === '' ? 0 : parseFloat(this.gross_weight.toString().replace(/,/g, ''));
       const localeTareWeight = this.tare_weight === null || this.tare_weight === '' ? 0 : parseFloat(this.tare_weight.toString().replace(/,/g, ''));
-      const netWeight = (localeGrossWeight - localeTareWeight) > 0 ? (localeGrossWeight - localeTareWeight) : 0;
+      const netWeight = parseFloat((localeGrossWeight - localeTareWeight) > 0 ? (localeGrossWeight - localeTareWeight) : 0).toFixed(2);
       return this.formatDecimal(netWeight);
     },
     showReceiptNumber () {
@@ -738,6 +742,7 @@ export default {
       this.type = 'D';
       this.operation = 'P';
       this.referral_number = '';
+      this.receipt_number = '';
       const stringFullDate = (new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(new Date())).replace(',', '');
       const arrayFullDate = stringFullDate.split(' ');
       let arrayDate = arrayFullDate[0].split('/');
@@ -774,7 +779,7 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
-          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.replace(/,/g, '') : 0,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.toString().replace(/,/g, '') : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,
@@ -803,7 +808,7 @@ export default {
           date: this.date,
           time: this.time,
           material: this.material,
-          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.replace(/,/g, '') : 0,
+          ash_percentage: this.ash_percentage && this.ash_percentage !== '' ? this.ash_percentage.toString().replace(/,/g, '') : 0,
           origin_yard: this.type === 'D' || this.type === 'R' || this.type === 'V' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'P') ? this.origin_yard : null,
           destiny_yard: this.type === 'D' || this.type === 'R' || this.type === 'C' || ((this.type === 'OC' || this.type === 'OP') && this.operation === 'D') ? this.destiny_yard : null,
           conveyor_company: this.conveyor_company,

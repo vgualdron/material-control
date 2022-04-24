@@ -2,7 +2,7 @@ export default {
   home: 'inicio',
   material: 'material',
   adminTiquet: 'administrar tiquete',
-  adjustment: 'ajuste',
+  adjustment: 'ajuste stock',
   tiquet: 'tiquete',
   user: 'usuario',
   yard: 'patio',
@@ -15,6 +15,14 @@ export default {
   materialSettlement: 'liquidación material',
   adminMaterialSettlement: 'administrar liquidación material',
   adminFreightSettlement: 'administrar liquidación flete',
+  report: 'reportes',
+  movementsReport: 'Informe de Movimientos',
+  yardStockReport: 'Informe de Stock por Patio',
+  completeTransfersReport: 'Informe de Traslados',
+  uncompleteTransfersReport: 'Informe de Traslados Incompletos',
+  unbilledPurchasesReport: 'Compras no Facturadas',
+  unbilledSalesReport: 'Ventas no Facturadas',
+  unbilledFreightReport: 'Fletes no Facturados',
   logout: 'cerrar sesión',
   synchronize: 'sincronizar'
 };

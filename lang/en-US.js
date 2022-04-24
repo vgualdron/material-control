@@ -2,7 +2,7 @@ export default {
   home: 'home',
   material: 'material',
   adminTiquet: 'administrate tiquet',
-  adjustment: 'adjustment',
+  adjustment: 'stock adjustment',
   tiquet: 'tiquet',
   user: 'user',
   yard: 'yard',
@@ -15,6 +15,14 @@ export default {
   materialSettlement: 'material settlement',
   adminMaterialSettlement: 'admin material settlement',
   adminFreightSettlement: 'admin freight settlement',
+  report: 'report',
+  movementsReport: 'movements report',
+  yardStockReport: 'yard Stock Report',
+  completeTransfersReport: 'completeTransfersReport',
+  uncompleteTransfersReport: 'uncompleteTransfersReport',
+  unbilledPurchasesReport: 'unbilledPurchasesReport',
+  unbilledSalesReport: 'unbilledSalesReport',
+  unbilledFreightReport: 'unbilledFreightReport',
   logout: 'logout',
   synchronize: 'synchronize'
 };
