@@ -121,7 +121,7 @@ export default {
     workbox: {
       runtimeCaching: [
         {
-          urlPattern: 'https://novumcolombia.com/.*',
+          urlPattern: 'https://colombiawebapp1.novumenergy.com/.*',
           strategyOptions: {
             cacheName: 'our-cache',
           },
