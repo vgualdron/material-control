@@ -19,7 +19,7 @@ jobs:
         run: |
           npm install
           npm run generate
-      - name: Sync files 📂
+      - name: Sync files 📂 server ColombiaNovumApp1
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: ${{ secrets.FTP_SERVER_NAME }}
