@@ -27,5 +27,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           dangerous-clean-slate: true
           log-level: verbose
-          protocol: ftp
+          protocol: ftps
           local-dir: ./docs/
