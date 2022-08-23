@@ -28,4 +28,5 @@ jobs:
           dangerous-clean-slate: true
           log-level: verbose
           protocol: ftps
+          timeout: 120000
           local-dir: ./docs/
