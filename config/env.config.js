@@ -5,7 +5,7 @@ const production = {
   baseUrl: '../../../',
   themeColor: '#000',
   description: 'Aplicación web para el control de materiales de la empresa Novum Energy',
-  urlApi: 'https://colombiawebapp1.novumenergy.com/api',
+  urlApi: 'https://colombiawebapp1.novumenergy.com/api/index.php',
   url: 'https://colombiawebapp1.novumenergy.com'
 };
 const development = {
